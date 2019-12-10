@@ -1,4 +1,5 @@
 public class ITypeInstruction implements Instruction {
+
     enum Reg {
         RT_RS_IMM,
         RT_IMM_RS,
@@ -32,7 +33,8 @@ public class ITypeInstruction implements Instruction {
     }
 
     private ITypeNames command;
-    private int rs = 0, rt = 0;
+    private int rs = 0;
+    private int rt = 0;
     private short imm = 0;
 
     public ITypeInstruction(ITypeNames command, int arg1, int arg2, int arg3) {
@@ -60,9 +62,25 @@ public class ITypeInstruction implements Instruction {
         }
     }
 
+    public ITypeNames getCommand() {
+        return command;
+    }
+
+    public int getRS() {
+        return rs;
+    }
+
+    public int getRT() {
+        return rt;
+    }
+
+    public short getImmediate() {
+        return imm;
+    }
+
     @Override
     public String getInstructionName() {
-        return command.name();
+        return getCommand().name();
     }
 
     @Override
@@ -72,36 +90,36 @@ public class ITypeInstruction implements Instruction {
 
     @Override
     public int getOpCode() {
-        return command.opcode;
+        return getCommand().opcode;
     }
 
     @Override
     public String toAssembly() {
-        switch (command.decodeOrder) {
+        switch (getCommand().decodeOrder) {
             case RT_IMM:
                 return String.format("%s %s, %d",
                         getInstructionName(),
-                        RegisterNames.getRegisterIdentifier(rt),
-                        imm);
+                        RegisterNames.getRegisterIdentifier(getRT()),
+                        getImmediate());
             case RT_RS_IMM:
                 return String.format("%s %s, %s, %d",
                         getInstructionName(),
-                        RegisterNames.getRegisterIdentifier(rt),
-                        RegisterNames.getRegisterIdentifier(rs),
-                        imm);
+                        RegisterNames.getRegisterIdentifier(getRT()),
+                        RegisterNames.getRegisterIdentifier(getRS()),
+                        getImmediate());
             case RT_IMM_RS:
                 return String.format("%s %s, %d(%s)",
                         getInstructionName(),
-                        RegisterNames.getRegisterIdentifier(rt),
-                        imm,
-                        RegisterNames.getRegisterIdentifier(rs));
+                        RegisterNames.getRegisterIdentifier(getRT()),
+                        getImmediate(),
+                        RegisterNames.getRegisterIdentifier(getRS()));
             case RS_RT_LABEL:
                 //TODO: change immediate to label
                 return String.format("%s %s, %s, %d",
                         getInstructionName(),
-                        RegisterNames.getRegisterIdentifier(rs),
-                        RegisterNames.getRegisterIdentifier(rt),
-                        imm);
+                        RegisterNames.getRegisterIdentifier(getRS()),
+                        RegisterNames.getRegisterIdentifier(getRT()),
+                        getImmediate());
             default:
                 return null;
         }
@@ -111,8 +129,8 @@ public class ITypeInstruction implements Instruction {
     public String toMachineLanguage() {
         //op (6 bits), rs (5 bits), rt (5 bits), imm (16 bits)
         return Integer.toBinaryString(getOpCode() | (1 << 6)).substring(1) +
-                Integer.toBinaryString(rs | (1 << 5)).substring(1) +
-                Integer.toBinaryString(rt | (1 << 5)).substring(1) +
-                Integer.toBinaryString((int) imm | (1 << 16)).substring(1);
+                Integer.toBinaryString(getRS() | (1 << 5)).substring(1) +
+                Integer.toBinaryString(getRT() | (1 << 5)).substring(1) +
+                Integer.toBinaryString((int) getImmediate() | (1 << 16)).substring(1);
     }
 }

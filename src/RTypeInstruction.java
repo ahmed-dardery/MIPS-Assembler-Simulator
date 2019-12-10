@@ -1,4 +1,5 @@
 public class RTypeInstruction implements Instruction {
+
     enum Reg {
         RD_RT_RS,
         RD_RS_RT,
@@ -34,7 +35,9 @@ public class RTypeInstruction implements Instruction {
     }
 
     private final RTypeNames command;
-    private int rd = 0, rs = 0, rt = 0;
+    private int rd = 0;
+    private int rs = 0;
+    private int rt = 0;
     private int shamt = 0;
 
     public RTypeInstruction(RTypeNames command, int arg1, int arg2, int arg3) {
@@ -67,14 +70,34 @@ public class RTypeInstruction implements Instruction {
         }
     }
 
+    public RTypeNames getCommand() {
+        return command;
+    }
+
+    public int getRD() {
+        return rd;
+    }
+
+    public int getRS() {
+        return rs;
+    }
+
+    public int getRT() {
+        return rt;
+    }
+
+    public int getShamt() {
+        return shamt;
+    }
+
     @Override
     public String getInstructionName() {
-        return command.name();
+        return getCommand().name();
     }
 
     @Override
     public int getIdentifier() {
-        return command.funct << 6;
+        return getCommand().funct << 6;
     }
 
     @Override
@@ -84,38 +107,38 @@ public class RTypeInstruction implements Instruction {
 
     @Override
     public String toAssembly() {
-        switch (command.decodeOrder) {
+        switch (getCommand().decodeOrder) {
             case RD_RT_SHAMT:
                 return String.format("%s %s, %s, %d",
                         getInstructionName(),
-                        RegisterNames.getRegisterIdentifier(rd),
-                        RegisterNames.getRegisterIdentifier(rs),
-                        shamt);
+                        RegisterNames.getRegisterIdentifier(getRD()),
+                        RegisterNames.getRegisterIdentifier(getRS()),
+                        getShamt());
             case RS:
                 return String.format("%s %s",
                         getInstructionName(),
-                        RegisterNames.getRegisterIdentifier(rs));
+                        RegisterNames.getRegisterIdentifier(getRS()));
             case RD:
                 return String.format("%s %s",
                         getInstructionName(),
-                        RegisterNames.getRegisterIdentifier(rd));
+                        RegisterNames.getRegisterIdentifier(getRD()));
             case RS_RT:
                 return String.format("%s %s %s",
                         getInstructionName(),
-                        RegisterNames.getRegisterIdentifier(rs),
-                        RegisterNames.getRegisterIdentifier(rt));
+                        RegisterNames.getRegisterIdentifier(getRS()),
+                        RegisterNames.getRegisterIdentifier(getRT()));
             case RD_RS_RT:
                 return String.format("%s %s, %s, %s",
                         getInstructionName(),
-                        RegisterNames.getRegisterIdentifier(rd),
-                        RegisterNames.getRegisterIdentifier(rs),
-                        RegisterNames.getRegisterIdentifier(rt));
+                        RegisterNames.getRegisterIdentifier(getRD()),
+                        RegisterNames.getRegisterIdentifier(getRS()),
+                        RegisterNames.getRegisterIdentifier(getRT()));
             case RD_RT_RS:
                 return String.format("%s %s, %s, %s",
                         getInstructionName(),
-                        RegisterNames.getRegisterIdentifier(rd),
-                        RegisterNames.getRegisterIdentifier(rt),
-                        RegisterNames.getRegisterIdentifier(rs));
+                        RegisterNames.getRegisterIdentifier(getRD()),
+                        RegisterNames.getRegisterIdentifier(getRT()),
+                        RegisterNames.getRegisterIdentifier(getRS()));
             default:
                 return null;
         }
@@ -125,10 +148,10 @@ public class RTypeInstruction implements Instruction {
     public String toMachineLanguage() {
         //op[zero] (6 bits), rs (5 bits), rt (5 bits), rd (5 bits) shamt (5 bits), funct (6 bits)
         return Integer.toBinaryString(getOpCode() | (1 << 6)).substring(1) +
-                Integer.toBinaryString(rs | (1 << 5)).substring(1) +
-                Integer.toBinaryString(rt | (1 << 5)).substring(1) +
-                Integer.toBinaryString(rd | (1 << 5)).substring(1) +
-                Integer.toBinaryString(shamt | (1 << 5)).substring(1) +
-                Integer.toBinaryString(command.funct | (1 << 5)).substring(1);
+                Integer.toBinaryString(getRS() | (1 << 5)).substring(1) +
+                Integer.toBinaryString(getRT() | (1 << 5)).substring(1) +
+                Integer.toBinaryString(getRD() | (1 << 5)).substring(1) +
+                Integer.toBinaryString(getShamt() | (1 << 5)).substring(1) +
+                Integer.toBinaryString(getCommand().funct | (1 << 5)).substring(1);
     }
 }

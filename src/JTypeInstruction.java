@@ -1,4 +1,5 @@
 public class JTypeInstruction implements Instruction {
+
     enum JTypeNames {
         j(2), jal(3);
 
@@ -17,9 +18,17 @@ public class JTypeInstruction implements Instruction {
         this.addr = arg1;
     }
 
+    public JTypeNames getCommand() {
+        return command;
+    }
+
+    public int getAddr() {
+        return addr;
+    }
+
     @Override
     public String getInstructionName() {
-        return command.name();
+        return getCommand().name();
     }
 
     @Override
@@ -29,18 +38,18 @@ public class JTypeInstruction implements Instruction {
 
     @Override
     public int getOpCode() {
-        return command.opcode;
+        return getCommand().opcode;
     }
 
     @Override
     public String toAssembly() {
         //TODO: jump label
-        return String.format("%s %d", getInstructionName(), addr);
+        return String.format("%s %d", getInstructionName(), getAddr());
     }
 
     @Override
     public String toMachineLanguage() {
         return Integer.toBinaryString(getOpCode() | (1 << 6)).substring(1) +
-                Integer.toBinaryString(addr | (1 << 26)).substring(1);
+                Integer.toBinaryString(getAddr() | (1 << 26)).substring(1);
     }
 }
