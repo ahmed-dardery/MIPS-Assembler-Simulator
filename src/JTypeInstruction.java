@@ -1,4 +1,4 @@
-public class JTypeInstruction implements Instruction {
+public class JTypeInstruction extends Instruction {
     enum JTypeNames {
         j(2), jal(3);
 

@@ -1,4 +1,4 @@
-public class ITypeInstruction implements Instruction {
+public class ITypeInstruction extends Instruction {
 
     enum Reg {
         RT_RS_IMM,

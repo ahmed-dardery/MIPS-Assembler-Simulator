@@ -1,4 +1,4 @@
-public class RTypeInstruction implements Instruction {
+public class RTypeInstruction extends Instruction {
 
     enum Reg {
         RD_RT_RS,
@@ -90,22 +90,18 @@ public class RTypeInstruction implements Instruction {
         return shamt;
     }
 
-    @Override
     public String getInstructionName() {
         return getCommand().name();
     }
 
-    @Override
     public int getIdentifier() {
         return getCommand().funct << 6;
     }
 
-    @Override
     public int getOpCode() {
         return 0;
     }
 
-    @Override
     public String toAssembly() {
         switch (getCommand().decodeOrder) {
             case RD_RT_SHAMT:
@@ -144,7 +140,6 @@ public class RTypeInstruction implements Instruction {
         }
     }
 
-    @Override
     public String toMachineLanguage() {
         //op[zero] (6 bits), rs (5 bits), rt (5 bits), rd (5 bits) shamt (5 bits), funct (6 bits)
         return Integer.toBinaryString(getOpCode() | (1 << 6)).substring(1) +
