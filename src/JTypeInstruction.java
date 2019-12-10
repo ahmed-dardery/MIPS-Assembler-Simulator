@@ -1,5 +1,4 @@
 public class JTypeInstruction implements Instruction {
-
     enum JTypeNames {
         j(2), jal(3);
 
