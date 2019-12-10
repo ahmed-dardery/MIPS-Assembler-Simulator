@@ -24,6 +24,7 @@ public class ITypeInstruction implements Instruction {
 
         ITypeNames(int opcode) {
             this(opcode, Reg.RT_IMM_RS);
+
         }
 
         ITypeNames(int opcode, Reg decodeOrder) {

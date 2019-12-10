@@ -123,7 +123,7 @@ public class RTypeInstruction implements Instruction {
                         getInstructionName(),
                         RegisterNames.getRegisterIdentifier(getRD()));
             case RS_RT:
-                return String.format("%s %s %s",
+                return String.format("%s %s, %s",
                         getInstructionName(),
                         RegisterNames.getRegisterIdentifier(getRS()),
                         RegisterNames.getRegisterIdentifier(getRT()));
