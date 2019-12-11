@@ -8,7 +8,6 @@ public class RTypeInstruction extends Instruction {
         RS,
         RD
     }
-
     enum RTypeNames {
         sll(0, Reg.RD_RT_SHAMT), srl(2, Reg.RD_RT_SHAMT), sra(3, Reg.RD_RT_SHAMT),
 
