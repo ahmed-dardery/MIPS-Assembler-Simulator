@@ -7,17 +7,13 @@ public abstract class Instruction {
 		ITypeInstruction;
 	}
 	
-	public instructionType getInstructionType(String input) {
-		input=makeStringReadyToUse(input);
-		String command=splitArgs(input)[0];
-		if(jType(command)) return instructionType.JTypeInstruction;
-		else if(iType(command)) return instructionType.ITypeInstruction;
-		else if(rType(command)) return instructionType.RTypeInstruction;
-		
-		return null;
+	private static instructionType instructionTypeName;
+	
+	public static instructionType getInstructionType(Instruction input) {
+		return instructionTypeName;
 	}
 	
-	public Instruction getInstructionObject(String input) {
+	public static Instruction getInstructionObject(String input) {
 		input=makeStringReadyToUse(input);
 		
 		String result[] =splitArgs(input); 
@@ -32,22 +28,23 @@ public abstract class Instruction {
     	
 		if(jType(cmd)) {
 			type=new JTypeInstruction(JTypeInstruction.JTypeNames.valueOf(cmd),args[1]);
+			instructionTypeName=instructionType.JTypeInstruction;
 		}
 		
 		else if(iType(cmd)) {
 			type=new ITypeInstruction(ITypeInstruction.ITypeNames.valueOf(cmd),args[1],args[2],args[3]);
-			
+			instructionTypeName=instructionType.ITypeInstruction;
 		}
 		
 		else if(rType(cmd)) {
 			type=new RTypeInstruction(RTypeInstruction.RTypeNames.valueOf(cmd),args[1],args[2],args[3]);
-			
+			instructionTypeName=instructionType.RTypeInstruction;
 		}
 		else return null;
 		return type;
 	}
 	
-    public String makeStringReadyToUse(String input) {
+    public static String makeStringReadyToUse(String input) {
     	if(input.startsWith(" ")) {
     		int loc = input.indexOf("\\w");
     		input=input.substring(loc);
@@ -58,7 +55,7 @@ public abstract class Instruction {
     	return input;
 	}
 
-    public String[] splitArgs(String input) {
+    public static String[] splitArgs(String input) {
     	String result[]=input.split(",");/*
     	while(result.length<4) {
     		int length=result.length;
@@ -69,7 +66,7 @@ public abstract class Instruction {
     	
     }
 	
-	public int[] getRegNumber(String []args) {
+	public static int[] getRegNumber(String []args) {
 		int [] res= new int[args.length];
 		for(int i=1;i<args.length;++i) {
 			if(!args[i].startsWith("$")) {
@@ -82,7 +79,7 @@ public abstract class Instruction {
 		return res;
 	}
 
-	private boolean rType(String input) {
+	private static boolean rType(String input) {
     	for(RTypeInstruction.RTypeNames tst :RTypeInstruction.RTypeNames.values()) {
     		if(tst.toString().equals(input)) return true;
 		
@@ -90,7 +87,7 @@ public abstract class Instruction {
     	return false;
 	}
 
-	private boolean iType(String input) {
+	private static boolean iType(String input) {
     	for(ITypeInstruction.ITypeNames tst :ITypeInstruction.ITypeNames.values()) {
     		if(tst.toString().equals(input)) return true;
 		
@@ -99,7 +96,7 @@ public abstract class Instruction {
 		
 	}
 
-	private boolean jType(String input) {
+	private static boolean jType(String input) {
     	for(JTypeInstruction.JTypeNames tst :JTypeInstruction.JTypeNames.values()) {
     		if(tst.toString().equals(input)) return true;
 		
