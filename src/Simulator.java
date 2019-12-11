@@ -22,9 +22,7 @@ public class Simulator {
     public boolean executeNextInstruction(){
         Instruction current = getNextInstruction();
 
-        //TODO: Uncomment the next line and delete the line after it when get instruction type function is ready (STATIC)
-//        Instruction.instructionType currentInstructionType = Instruction.getInstructionType(current);
-        Instruction.instructionType currentInstructionType = Instruction.instructionType.JTypeInstruction;
+        Instruction.instructionType currentInstructionType = current.getInstructionType();
 
         if (currentInstructionType == Instruction.instructionType.RTypeInstruction) return RInstructionExecute(current);
         else if (currentInstructionType == Instruction.instructionType.ITypeInstruction) return IInstructionExecute(current);
