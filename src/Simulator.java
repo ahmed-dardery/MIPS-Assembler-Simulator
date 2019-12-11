@@ -57,7 +57,6 @@ public class Simulator {
     private boolean JInstructionExecute(Instruction current){
         // TODO: execute all J type instructions here given an instruction of J type as a parameter and return false if you faced any error
         // TODO: Also update here the program counter
-        // TODO : Adham
         return true;
     }
     private boolean executeLabel(int label){
