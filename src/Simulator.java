@@ -59,7 +59,10 @@ public class Simulator {
         // TODO: Also update here the program counter
         return true;
     }
-
+    private boolean executeLabel(int label){
+        //@TODO: make it takes label as input and modify in the program counter to the label
+        return true;
+    }
     // Takes index not offset
     private int getFromMemory(int memoryIndex){
         return memory[memoryIndex];
