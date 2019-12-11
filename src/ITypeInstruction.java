@@ -134,4 +134,9 @@ public class ITypeInstruction extends Instruction {
                 Integer.toBinaryString(getRT() | (1 << 5)).substring(1) +
                 Integer.toBinaryString((int) getImmediate() | (1 << 16)).substring(1);
     }
+
+	@Override
+	public instructionType getInstructionType() {
+		return Instruction.instructionType.ITypeInstruction;
+	}
 }

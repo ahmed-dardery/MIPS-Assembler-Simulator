@@ -148,4 +148,9 @@ public class RTypeInstruction extends Instruction {
                 Integer.toBinaryString(getShamt() | (1 << 5)).substring(1) +
                 Integer.toBinaryString(getCommand().funct | (1 << 5)).substring(1);
     }
+
+	@Override
+	public instructionType getInstructionType() {
+		return Instruction.instructionType.RTypeInstruction;
+	}
 }

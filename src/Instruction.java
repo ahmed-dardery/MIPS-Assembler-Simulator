@@ -1,17 +1,23 @@
+import java.util.ArrayList;
+
 //TODO: figure out what to do with jump instructions (because they jump to a label)
 public abstract class Instruction {
 	
-	enum instructionType{
+	public enum instructionType{
 		RTypeInstruction,
 		JTypeInstruction,
 		ITypeInstruction;
+		
 	}
 	
-	private static instructionType instructionTypeName;
 	
-	public static instructionType getInstructionType(Instruction input) {
-		return instructionTypeName;
+	
+	public Instruction(){
+		
 	}
+	
+	public abstract instructionType getInstructionType();
+	
 	
 	public static Instruction getInstructionObject(String input) {
 		input=makeStringReadyToUse(input);
@@ -25,22 +31,21 @@ public abstract class Instruction {
     	if(args==null) return null;
     	
     	Instruction type;
-    	
 		if(jType(cmd)) {
 			type=new JTypeInstruction(JTypeInstruction.JTypeNames.valueOf(cmd),args[1]);
-			instructionTypeName=instructionType.JTypeInstruction;
 		}
 		
 		else if(iType(cmd)) {
 			type=new ITypeInstruction(ITypeInstruction.ITypeNames.valueOf(cmd),args[1],args[2],args[3]);
-			instructionTypeName=instructionType.ITypeInstruction;
 		}
 		
 		else if(rType(cmd)) {
 			type=new RTypeInstruction(RTypeInstruction.RTypeNames.valueOf(cmd),args[1],args[2],args[3]);
-			instructionTypeName=instructionType.RTypeInstruction;
 		}
-		else return null;
+		else {
+			System.out.println("will return null");
+			return null;
+		}
 		return type;
 	}
 	
@@ -56,7 +61,7 @@ public abstract class Instruction {
 	}
 
     public static String[] splitArgs(String input) {
-    	String result[]=input.split(",");/*
+    	String result[]=input.split("\\s+|,");/*
     	while(result.length<4) {
     		int length=result.length;
     		result[length+1]="0";
@@ -127,16 +132,17 @@ public abstract class Instruction {
     abstract String toMachineLanguage();
     
     public static void main(String args[]) {
-    	String input= "add $a0, $a0,$a0)";
-
-    	input=input.replace("(",",");
-    	input=input.replace(")","");
-    	System.out.println(input);
-    	input=input.replaceAll("\\s+,\\s+|\\s+,|,\\s+",",");
-    	String arr[]=input.split(",|\\s+");
-    	for(String a :arr) {
-    		System.out.println(a);
+    	String input= "add $a0, $a0,$a0";
+    	String input2= "addi $a0, $a0,5";
+    	String input3= "sllv $a0, $a0,$a0";
+    	ArrayList<Instruction>in = new ArrayList<Instruction>();
+    	in.add(getInstructionObject(input));
+    	in.add(getInstructionObject(input2));
+    	in.add(getInstructionObject(input3));
+    	for(Instruction t:in) {
+    		System.out.println(t.getInstructionType());
     	}
+
     	
     }
 }

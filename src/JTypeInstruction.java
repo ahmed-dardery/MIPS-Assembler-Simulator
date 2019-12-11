@@ -51,4 +51,9 @@ public class JTypeInstruction extends Instruction {
         return Integer.toBinaryString(getOpCode() | (1 << 6)).substring(1) +
                 Integer.toBinaryString(getAddr() | (1 << 26)).substring(1);
     }
+
+	@Override
+	public instructionType getInstructionType() {
+		return Instruction.instructionType.JTypeInstruction;
+	}
 }
