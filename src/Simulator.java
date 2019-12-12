@@ -7,15 +7,19 @@ public class Simulator {
     private int nextInstrcutionIdx; // Acts like program counter but uses index in the list | -1 -> finish
     private final int memoryOffset; // start of the program in the memory
     static final int MEMORY_SIZE = (1<<15),REGISTER_SIZE = (1<<5);
-    private int[] memory = new int[MEMORY_SIZE] , registers = new int [REGISTER_SIZE];
+    private int[] memory , registers;
 
-    Simulator(List<Instruction> instructions,int memoryOffset){
+    Simulator(List<Instruction> instructions,int memoryOffset , int[] memory, int[] registers){
         this.instructions = instructions;
         this.memoryOffset = memoryOffset;
+        this.memory = memory;
+        this.registers = registers;
 
         fillMemoryWithInstructions();
     }
-
+    Simulator(List<Instruction> instructions,int memoryOffset){
+            this(instructions,memoryOffset,new int[MEMORY_SIZE],new int[REGISTER_SIZE]);
+    }
     private void fillMemoryWithInstructions() {
         //@TODO: Put the instructions list in the memory
     }
