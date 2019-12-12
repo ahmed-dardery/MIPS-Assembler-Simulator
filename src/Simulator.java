@@ -56,6 +56,56 @@ public class Simulator {
     private boolean IInstructionExecute(Instruction current){
         // TODO: execute all I type instructions here given an instruction of I type as a parameter and return false if you faced any error
         // TODO: Also update here the program counter
+        ITypeInstruction command = (ITypeInstruction) current;
+        int RSValue = getFromRegisters(command.getRS());
+        int RTValue = getFromRegisters(command.getRT());
+        int imm = command.getImmediate();
+
+
+        if (nextInstrcutionIdx++ >= instructions.size()) nextInstrcutionIdx = -1; // update the next instruction and if you reach the end make it -1
+
+        switch (command.getCommand()){
+            case lb:
+                break;
+            case lh:
+                break;
+            case lw:
+                break;
+            case sb:
+                break;
+            case sh:
+                break;
+            case sw:
+                break;
+            case beq:
+                break;
+            case bne:
+                break;
+            case lbu:
+                break;
+            case lhu:
+                break;
+            case lui:
+                break;
+            case ori:
+                break;
+            case addi:
+                break;
+            case andi:
+                break;
+            case slti:
+                break;
+            case xori:
+                break;
+            case addiu:
+                break;
+            case sltiu:
+                break;
+            default:
+                return false;
+        }
+
+        setToRegister(RTValue,command.getRT());
         return true;
     }
     private boolean JInstructionExecute(Instruction current){
