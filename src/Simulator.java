@@ -1,5 +1,7 @@
 
 
+import jdk.jfr.Unsigned;
+
 import java.util.List;
 
 public class Simulator {
@@ -70,7 +72,11 @@ public class Simulator {
 
         switch (command.getCommand()) {
             case add:
-                rd = rs + rt;
+                try {
+                    rd = Math.addExact(rs, rt);
+                }catch (ArithmeticException e) {
+                    System.out.println(e);
+                }
                 break;
             case sub:
                 rd = rs - rt;
@@ -85,10 +91,10 @@ public class Simulator {
                 hi = (int) ((temp > (1 << 31)) ? temp - (1 << 31) : 0);
                 break;
             case addu:
-                rd = (int) ((rs & castUInt) + (rt & castUInt));
+                rd = rs + rt;
                 break;
             case subu:
-                rd = (int) ((rs & castUInt) - (rt ^ castUInt));
+                rd = rs - rt;
                 break;
             case divu:
                 lo = (int) ((rs & castUInt) / (rt & castUInt));
