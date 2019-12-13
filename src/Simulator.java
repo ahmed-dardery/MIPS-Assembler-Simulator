@@ -60,7 +60,7 @@ public class Simulator {
         return instructions.get(nextInstrcutionIdx);
     }
 
-    private boolean RInstructionExecute(Instruction current) {
+    private boolean RInstructionExecute(Instruction current) throws Exception {
         // TODO: execute all r type instructions here given an instruction of R type as a parameter and return false if you faced any error
         // TODO: Also update here the program counter
         final long castUInt = 0x00000000ffffffffL;
@@ -142,10 +142,10 @@ public class Simulator {
                 rd = ((rs & castUInt) < (rt & castUInt)) ? 1 : 0;
                 break;
             case jr:
-                nextInstrcutionIdx = rs;
+                changePCValue(rs);
                 break;
             case jalr:
-                nextInstrcutionIdx = rs;
+                changePCValue(rs);
                 break;
             case mfhi:
                 rd = hi;
@@ -157,8 +157,7 @@ public class Simulator {
                 return false;
         }
         setToRegister(rd, command.getRD());
-        if (nextInstrcutionIdx++ >= instructions.size()) nextInstrcutionIdx = -1;
-
+        increasePC();
         return true;
     }
 
@@ -170,10 +169,6 @@ public class Simulator {
         int RSValue = getFromRegisters(command.getRS());
         int RTValue = getFromRegisters(command.getRT());
         int imm = command.getImmediate();
-
-
-        if (nextInstrcutionIdx++ >= instructions.size())
-            nextInstrcutionIdx = -1; // update the next instruction and if you reach the end make it -1
 
         switch (command.getCommand()) {
             case lb:
@@ -227,6 +222,8 @@ public class Simulator {
         }
 
         setToRegister(RTValue, command.getRT()); // in case of jump RT will not change so it will set it's value with the same old value
+        increasePC();
+
         return true;
     }
 
@@ -274,5 +271,14 @@ public class Simulator {
         registers[registerIndex] = data;
         return true;
     }
-
+    private void increasePC(){
+        if (nextInstrcutionIdx++ >= instructions.size())
+            nextInstrcutionIdx = -1; // update the next instruction and if you reach the end make it -1
+    }
+    private void changePCValue(int value) throws Exception {
+        if(value > instructions.size())
+            throw new Exception("Value (" + value + ") out of bound");
+        else
+            nextInstrcutionIdx = value;
+    }
 }
