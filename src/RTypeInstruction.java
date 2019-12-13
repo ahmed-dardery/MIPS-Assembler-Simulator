@@ -146,7 +146,7 @@ public class RTypeInstruction extends Instruction {
                 Integer.toBinaryString(getRT() | (1 << 5)).substring(1) +
                 Integer.toBinaryString(getRD() | (1 << 5)).substring(1) +
                 Integer.toBinaryString(getShamt() | (1 << 5)).substring(1) +
-                Integer.toBinaryString(getCommand().funct | (1 << 5)).substring(1);
+                Integer.toBinaryString(getCommand().funct | (1 << 6)).substring(1);
     }
 
 	@Override
