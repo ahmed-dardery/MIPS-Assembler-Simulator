@@ -29,7 +29,7 @@ public class Simulator {
         //@TODO: Put the instructions list in the memory
     }
 
-    public boolean executeNextInstruction() {
+    public boolean executeNextInstruction() throws Exception {
         Instruction current = getNextInstruction();
 
         Instruction.instructionType currentInstructionType = current.getInstructionType();
@@ -43,7 +43,7 @@ public class Simulator {
         return false;
     }
 
-    public boolean executeAllInstructions() {
+    public boolean executeAllInstructions() throws Exception {
         while (executeNextInstruction()) {
             if (nextInstrcutionIdx == -1) return true; // end of the program
         }
