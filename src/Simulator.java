@@ -1,7 +1,5 @@
 
 
-import jdk.jfr.Unsigned;
-
 import java.util.List;
 
 public class Simulator {
@@ -27,6 +25,10 @@ public class Simulator {
 
     private void fillMemoryWithInstructions() {
         //@TODO: Put the instructions list in the memory
+        //TODO: change the memory type to String if you want to store the Machine Code as Hex
+        int memoryOffset = 0;
+        for (Instruction instruction : instructions)
+            memory[memoryOffset++] = Integer.parseInt(instruction.toMachineLanguage(), 2);
     }
 
     public boolean executeNextInstruction() throws Exception {
@@ -52,7 +54,9 @@ public class Simulator {
 
     public int getProgramCounter() {
         //TODO: find appropriate way to return the program counter given index in the list and offset in memory
-        return 0;
+        //PC represents the offset of the memory and increased by 4
+        //Because the memory divided into blocks of 4 bytes
+        return nextInstrcutionIdx * 4;
     }
 
     private Instruction getNextInstruction() {
@@ -74,7 +78,7 @@ public class Simulator {
             case add:
                 try {
                     rd = Math.addExact(rs, rt);
-                }catch (ArithmeticException e) {
+                } catch (ArithmeticException e) {
                     System.out.println(e);
                 }
                 break;
@@ -142,11 +146,12 @@ public class Simulator {
                 rd = ((rs & castUInt) < (rt & castUInt)) ? 1 : 0;
                 break;
             case jr:
-                changePCValue(rs);
-                break;
+                gotoInstruction(rs);
+                return true;
             case jalr:
-                changePCValue(rs);
-                break;
+                gotoInstruction(rs);
+                setToRegister(nextInstrcutionIdx + 1, RegisterNames.getRegisterIndex("$ra"));
+                return true;
             case mfhi:
                 rd = hi;
                 break;
@@ -212,10 +217,10 @@ public class Simulator {
                 RTValue = RSValue < imm ? 1 : 0;
                 break;
             case beq:
-                if (RSValue == RTValue) nextInstrcutionIdx = gotoLabel(imm);
+                if (RSValue == RTValue) nextInstrcutionIdx = gotoInstruction(imm);
                 break;
             case bne:
-                if (RSValue != RTValue) nextInstrcutionIdx = gotoLabel(imm);
+                if (RSValue != RTValue) nextInstrcutionIdx = gotoInstruction(imm);
                 break;
             default:
                 return false;
@@ -235,11 +240,11 @@ public class Simulator {
 
         switch (command.getCommand()) {
             case j:
-                nextInstrcutionIdx = gotoLabel(add);
+                nextInstrcutionIdx = gotoInstruction(add);
                 break;
             case jal:
-                // TODO: see the difference between them
-                nextInstrcutionIdx = gotoLabel(add);
+                nextInstrcutionIdx = gotoInstruction(add);
+                setToRegister(nextInstrcutionIdx + 1, RegisterNames.getRegisterIndex("$ra"));
                 break;
             default:
                 return false;
@@ -247,7 +252,7 @@ public class Simulator {
         return true;
     }
 
-    private int gotoLabel(int label) {
+    private int gotoInstruction(int label) {
         //@TODO: make it takes label as input and returns label index
         return 0;
     }
@@ -271,12 +276,14 @@ public class Simulator {
         registers[registerIndex] = data;
         return true;
     }
-    private void increasePC(){
+
+    private void increasePC() {
         if (nextInstrcutionIdx++ >= instructions.size())
             nextInstrcutionIdx = -1; // update the next instruction and if you reach the end make it -1
     }
+
     private void changePCValue(int value) throws Exception {
-        if(value > instructions.size())
+        if (value > instructions.size())
             throw new Exception("Value (" + value + ") out of bound");
         else
             nextInstrcutionIdx = value;

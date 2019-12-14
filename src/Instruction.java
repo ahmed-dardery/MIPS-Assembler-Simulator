@@ -143,6 +143,5 @@ public abstract class Instruction {
     		System.out.println(t.getInstructionType());
     	}
 
-    	
     }
 }
