@@ -1,15 +1,16 @@
-import org.jfree.ui.RefineryUtilities;
+import com.sun.deploy.security.SelectableSecurityManager;
+import javafx.application.Application;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 public class SimulatorForm extends JFrame {
@@ -21,7 +22,6 @@ public class SimulatorForm extends JFrame {
     private JButton clearRegistersButton;
     private JButton clearMemoryButton;
     private JButton uploadCodeButton;
-    private JTextPane codePane;
     private JScrollPane instructionScrollPanel;
     private JScrollPane memoryScrollPanel;
     private JScrollPane registerScroll;
@@ -33,106 +33,81 @@ public class SimulatorForm extends JFrame {
     private JTextPane instructionDecPane;
     private JTextField currebtInstructionTxt;
     private JTextField textField1;
+    private JTable textTable;
 
-    private static final int MEMORY_SIZE = (1 << 15), REGISTER_SIZE = (1 << 5);
     private String assemblyCode;
-    private int[] memory, registers;
 
+    final Simulator simulator;
+
+    private void buildText() {
+        DefaultTableModel model = (DefaultTableModel) textTable.getModel();
+        model.setColumnCount(0);
+        model.addColumn("Address");
+        model.addColumn("Assembly");
+        model.addColumn("Content");
+    }
+
+    private void resyncText() {
+        DefaultTableModel model = (DefaultTableModel) textTable.getModel();
+        model.setRowCount(0);
+        List<Instruction> lst = simulator.getInstructionList();
+        for (int i = 0; i < lst.size(); i++) {
+            model.addRow(new Object[]{"0x" + Integer.toString(i << 2, 16), lst.get(i).toAssembly(), lst.get(i).toMachineLanguage()});
+        }
+    }
 
     private void buildMemory() {
-        DefaultTableModel memoryModel = (DefaultTableModel) memoryTable.getModel();
+        DefaultTableModel model = (DefaultTableModel) memoryTable.getModel();
+        model.setColumnCount(0);
+        model.addColumn("Address");
+        model.addColumn("Value");
+    }
 
-        memoryModel.setColumnCount(0);
-        memoryModel.addColumn("Address");
-        memoryModel.addColumn("Value");
-
-        memoryModel.setRowCount(0);
-        for(int i = 0 ; i < MEMORY_SIZE ; ++i){
-            //TODO edit the address(i) that added to the table row
-            memoryModel.addRow(new Object[]{i, memory[i]});
+    private void resyncMemory() {
+        DefaultTableModel model = (DefaultTableModel) memoryTable.getModel();
+        model.setRowCount(0);
+        Memory mem = simulator.getMemory();
+        for (int i = 0; i < mem.getMemorySize(); i++) {
+            model.addRow(new Object[]{"0x" + Integer.toString(i << 2, 16), mem.getValue(i)});
         }
     }
 
-    private void buildRegister() {
-        DefaultTableModel registerModel = (DefaultTableModel) registerTable.getModel();
+    private void buildRegisters() {
+        DefaultTableModel model = (DefaultTableModel) registerTable.getModel();
+        model.setColumnCount(0);
+        model.addColumn("Register");
+        model.addColumn("Content");
+    }
 
-        registerModel.setColumnCount(0);
-        registerModel.addColumn("Address");
-        registerModel.addColumn("Value");
-
-        registerModel.setRowCount(0);
-        for(int i = 0 ; i < REGISTER_SIZE ; ++i){
-            //TODO edit the address(i) that added to the table row
-            registerModel.addRow(new Object[]{i, registers[i]});
+    private void resyncRegisters() {
+        DefaultTableModel model = (DefaultTableModel) registerTable.getModel();
+        model.setRowCount(0);
+        Memory mem = simulator.getRegisters();
+        for (int i = 0; i < mem.getMemorySize(); i++) {
+            model.addRow(new Object[]{RegisterNames.getRegisterIdentifier(i), mem.getValue(i)});
         }
     }
 
-    private void readAndSetCode(File assemblyCodeFile) throws FileNotFoundException {
-        Scanner s = new Scanner(assemblyCodeFile);
-
-        while (s.hasNextLine())
-            assemblyCode += s.nextLine() + '\n';
-
-        codePane.setText(assemblyCode);
-    }
-
-    SimulatorForm(int[] memory, int[] registers) {
-        this.memory = memory;
-        this.registers = registers;
+    SimulatorForm(Simulator s) {
+        simulator = s;
 
         buildMemory();
-        buildRegister();
+        buildRegisters();
+        buildText();
+
+        clearMemory();
+        clearRegisters();
 
         add(panel);
         setTitle("Assembler");
         setSize(1100, 700);
         setVisible(true);
 
-        clearMemoryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearMemory();
-            }
-        });
-        clearRegistersButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearRegisters();
-            }
-        });
-        uploadCodeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                File assemblyCodeFile;
-                JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-                int returnValue = jfc.showOpenDialog(null);
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("Text files", "txt");
-                jfc.addChoosableFileFilter(filter);
-
-                try {
-                    if (returnValue == JFileChooser.APPROVE_OPTION) {
-                        assemblyCodeFile = jfc.getSelectedFile();
-                        readAndSetCode(assemblyCodeFile);
-                    } else
-                        throw new Exception("Can not upload the Selected File");
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-            }
-        });
-        runInstructionButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO Run Instruction by instruction
-            }
-        });
-        runEntireButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO Run Entire Program
-            }
-        });
-        RefineryUtilities.centerFrameOnScreen(this);
+        clearMemoryButton.addActionListener(e -> clearMemory());
+        clearRegistersButton.addActionListener(e -> clearRegisters());
+        uploadCodeButton.addActionListener(e -> uploadCode());
+        runInstructionButton.addActionListener(e -> runSingleInstruction());
+        runEntireButton.addActionListener(e -> runAllInstructions());
         memoryTable.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -161,39 +136,71 @@ public class SimulatorForm extends JFrame {
         });
     }
 
+    private void runAllInstructions() {
+        try {
+            simulator.executeAllInstructions();
+        } catch (Exception ex) {
+            addException(ex);
+        }
+    }
+
+    private void runSingleInstruction() {
+        try {
+            UpdateHandler uh = new UpdateHandler();
+            simulator.executeNextInstruction(uh);
+            textField1.setText(String.valueOf(simulator.getPC()));
+
+            DefaultTableModel model = (DefaultTableModel) memoryTable.getModel();
+            for (int v : uh.getScheduledMemory()) {
+                model.setValueAt(simulator.getMemory().getValue(v), v, 1);
+            }
+            model = (DefaultTableModel) registerTable.getModel();
+            for (int v : uh.getScheduledRegisters()) {
+                model.setValueAt(simulator.getRegisters().getValue(v), v, 1);
+            }
+            if (uh.getScheduledLoHi()){
+                //TODO: update LO and HI textboxes.
+            }
+
+        } catch (Exception ex) {
+            addException(ex);
+        }
+    }
+
+    private void uploadCode() {
+        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        jfc.addChoosableFileFilter(new FileNameExtensionFilter("Text files", "txt"));
+
+        if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            File assemblyCodeFile = jfc.getSelectedFile();
+            try {
+                simulator.setInstructionList(Parser.parseFile(assemblyCodeFile));
+                resyncText();
+            } catch (IOException e) {
+                addException(e);
+            }
+        }
+    }
+
+
     public void addException(Exception e) {
         String exception = exceptionPane.getText();
         exception += e.toString() + '\n';
+        e.printStackTrace();
         exceptionPane.setText(exception);
     }
 
-    public void setCurrentInstruction(Instruction instruction) {
-        currebtInstructionTxt.setText(instruction.toAssembly());
-    }
-
-    public void setInstructionDescription(String des) {
-        instructionDecPane.setText(des);
-    }
-
-    public void clearMemory(){
-        for(int i = 0 ; i < MEMORY_SIZE ; ++i){
-            //TODO Add Getter and Setter if you want.
-            memory[i] = 0;
+    public void clearMemory() {
+        for (int i = 0; i < simulator.getMemory().getMemorySize(); ++i) {
+            simulator.getMemory().setValue(i, 0);
         }
-        buildMemory();
+        resyncMemory();
     }
 
-    public void clearRegisters(){
-        for(int i = 0 ; i < REGISTER_SIZE ; ++i){
-            //TODO Add Getter and Setter if you want.
-            registers[i] = 0;
+    public void clearRegisters() {
+        for (int i = 0; i < simulator.getRegisters().getMemorySize(); ++i) {
+            simulator.getRegisters().setValue(i, 0);
         }
-        buildRegister();
-    }
-
-    public static void main(String[] args) {
-        int[] memory = new int[(1 << 15)];
-        int[] register= new int[(1 << 5)];
-        SimulatorForm sf = new SimulatorForm(memory, register);
+        resyncRegisters();
     }
 }

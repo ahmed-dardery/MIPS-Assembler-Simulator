@@ -152,7 +152,7 @@ public class RTypeInstruction extends Instruction {
     }
 
     @Override
-    public instructionType getInstructionType() {
-        return Instruction.instructionType.RTypeInstruction;
+    public InstructionType getInstructionType() {
+        return InstructionType.RTypeInstruction;
     }
 }

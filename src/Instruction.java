@@ -1,13 +1,14 @@
 import java.util.Map;
 
 public abstract class Instruction {
-    static final boolean BRANCH_DELAY_SLOT = true;
+    private static final boolean BRANCH_DELAY_SLOT = true;
 
-    public enum instructionType {
+    public enum InstructionType {
         RTypeInstruction,
         JTypeInstruction,
         ITypeInstruction
     }
+    public Instruction(){}
 
     public static Instruction parseString(String input, int idx, Map<String, Integer> labelResolver) {
         input = input.trim().replace("(", ",").replace(")", "").replaceAll("\\s+,\\s+|\\s+,|,\\s+", ",");
@@ -85,7 +86,7 @@ public abstract class Instruction {
     /**
      * @return the instruction type of the class
      */
-    public abstract instructionType getInstructionType();
+    public abstract InstructionType getInstructionType();
 
     /**
      * @return short instruction name in assembly

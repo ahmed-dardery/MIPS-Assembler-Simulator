@@ -1,16 +1,12 @@
 import java.util.List;
 
 public class Memory {
-    private int[] memory;
+    private final int[] memory;
     private static final int BYTE_MASK = 0xFF, HALF_WORD_MASK = 0xFFFF;
-
+    private final int memorySize;
     Memory(int memorySizeInWords) {
         memory = new int[memorySizeInWords];
-    }
-    public void fillMemoryWithInstructions(List<Instruction> instructions){
-        int offset = 0;
-        for (Instruction instruction : instructions)
-            memory[offset++] = instruction.toMachineLanguage();
+        memorySize = memorySizeInWords;
     }
     //Memory is stored as a word (4 bytes), this reads and sets a particular byte.
     public byte getByte(int memoryAddress) {
@@ -55,5 +51,9 @@ public class Memory {
 
     public void setValue(int index, int data){
         memory[index] = data;
+    }
+
+    public int getMemorySize() {
+        return memorySize;
     }
 }

@@ -52,7 +52,7 @@ public class JTypeInstruction extends Instruction {
     }
 
     @Override
-    public instructionType getInstructionType() {
-        return Instruction.instructionType.JTypeInstruction;
+    public InstructionType getInstructionType() {
+        return InstructionType.JTypeInstruction;
     }
 }

@@ -34,12 +34,9 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="865de" class="javax.swing.JTextPane" binding="codePane">
+              <component id="d2502" class="javax.swing.JTable" binding="textTable">
                 <constraints/>
-                <properties>
-                  <text value=""/>
-                  <toolTipText value=""/>
-                </properties>
+                <properties/>
               </component>
             </children>
           </scrollpane>

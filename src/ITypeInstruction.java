@@ -136,7 +136,7 @@ public class ITypeInstruction extends Instruction {
     }
 
     @Override
-    public instructionType getInstructionType() {
-        return Instruction.instructionType.ITypeInstruction;
+    public InstructionType getInstructionType() {
+        return InstructionType.ITypeInstruction;
     }
 }

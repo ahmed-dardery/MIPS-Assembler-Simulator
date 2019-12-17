@@ -4,46 +4,62 @@ import java.util.List;
 
 public class Simulator {
     private List<Instruction> instructions;
-    private int programCounter; // Acts like program counter but uses index in the list | -1 -> finish
-    private static final int MEMORY_SIZE = (1 << 15), REGISTER_SIZE = (1 << 5);
+    private int programCounter;
+    private static final int MEMORY_SIZE = (1 << 14), REGISTER_SIZE = (1 << 5);
     private Memory memory;
-    private Memory text;
     private Memory registers;
     private int hi = 0;
     private int lo = 0;
 
-    Simulator(List<Instruction> instructions) {
-        this.instructions = instructions;
+    Simulator() {
         this.memory = new Memory(MEMORY_SIZE);
-        this.text = new Memory(MEMORY_SIZE);
         this.registers = new Memory(REGISTER_SIZE);
-
-        this.memory.fillMemoryWithInstructions(instructions);
     }
 
-    public boolean executeNextInstruction() throws Exception {
+
+    public List<Instruction> getInstructionList() {
+        return instructions;
+    }
+
+    public void setInstructionList(List<Instruction> instructions) {
+        this.instructions = instructions;
+        setPC(0);
+    }
+
+    public void updateInstruction(int index, Instruction instr) {
+        this.instructions.set(index, instr);
+    }
+
+    public void executeNextInstruction(UpdateHandler updateHandler) throws Exception {
         Instruction current = fetchNextInstruction();
-        System.out.println(current.toAssembly());
-        Instruction.instructionType currentInstructionType = current.getInstructionType();
+
+        Instruction.InstructionType currentInstructionType = current.getInstructionType();
+
         advancePC();
 
         switch (currentInstructionType) {
             case RTypeInstruction:
-                return RInstructionExecute(current);
+                RInstructionExecute(current, updateHandler);
+                break;
             case ITypeInstruction:
-                return IInstructionExecute(current);
+                IInstructionExecute(current, updateHandler);
+                break;
             case JTypeInstruction:
-                return JInstructionExecute(current);
+                JInstructionExecute(current, updateHandler);
+                break;
             default:
-                return false;
+                throw new Exception("Unknown Instruction type.");
         }
     }
 
-    public boolean executeAllInstructions() throws Exception {
-        while (executeNextInstruction()) {
-            if (programCounter == -1) return true; // end of the program
+    public void executeNextInstruction() throws Exception {
+        executeNextInstruction(null);
+    }
+
+    public void executeAllInstructions() throws Exception {
+        while (true) {
+            executeNextInstruction();
         }
-        return false;
     }
 
     private Instruction fetchNextInstruction() throws Exception {
@@ -83,181 +99,177 @@ public class Simulator {
         programCounter += 4;
     }
 
-    private boolean RInstructionExecute(Instruction current) {
+    private void RInstructionExecute(Instruction current, UpdateHandler updateHandler) throws Exception {
         final long castUInt = 0x00000000ffffffffL;
         RTypeInstruction command = (RTypeInstruction) current;
-        int rd = getFromRegisters(command.getRD());
-        int rt = getFromRegisters(command.getRT());
-        int rs = getFromRegisters(command.getRS());
+        int RDval = getFromRegisters(command.getRD());
+        int RTval = getFromRegisters(command.getRT());
+        int RSval = getFromRegisters(command.getRS());
         int shamt = command.getShamt();
 
         switch (command.getCommand()) {
             case add:
-                try {
-                    rd = Math.addExact(rs, rt);
-                } catch (ArithmeticException e) {
-                    System.out.println(e);
-                }
+                RDval = Math.addExact(RSval, RTval);
                 break;
             case sub:
-                try {
-                    rd = Math.subtractExact(rs, rt);
-                } catch (ArithmeticException e) {
-                    System.out.println(e);
-                }
+                RDval = Math.subtractExact(RSval, RTval);
                 break;
             case div:
-                lo = rs / rt;
-                hi = rs % rt;
+                updateHandler.scheduleLoHi();
+                lo = RSval / RTval;
+                hi = RSval % RTval;
                 break;
             case mult:
-                long temp = rs * rt;
+                updateHandler.scheduleLoHi();
+                long temp = RSval * RTval;
                 lo = (int) ((temp > (1 << 31)) ? (1 << 31) : temp);
                 hi = (int) ((temp > (1 << 31)) ? temp - (1 << 31) : 0);
                 break;
             case addu:
-                rd = rs + rt;
+                RDval = RSval + RTval;
                 break;
             case subu:
-                rd = rs - rt;
+                RDval = RSval - RTval;
                 break;
             case divu:
-                lo = Integer.divideUnsigned(rs, rt);
-                hi = Integer.remainderUnsigned(rs, rt);
+                updateHandler.scheduleLoHi();
+                lo = Integer.divideUnsigned(RSval, RTval);
+                hi = Integer.remainderUnsigned(RSval, RTval);
                 break;
             case multu:
-                long tempu = (rs & castUInt) * (rt & castUInt);
+                updateHandler.scheduleLoHi();
+                long tempu = (RSval & castUInt) * (RTval & castUInt);
                 lo = (int) ((tempu > (1 << 31)) ? (1 << 31) : tempu);
                 hi = (int) ((tempu > (1 << 31)) ? tempu - (1 << 31) : 0);
                 break;
             case or:
-                rd = rs | rt;
+                RDval = RSval | RTval;
                 break;
             case and:
-                rd = rs & rt;
+                RDval = RSval & RTval;
                 break;
             case nor:
-                rd = ~(rs | rt);
+                RDval = ~(RSval | RTval);
                 break;
             case xor:
-                rd = rs ^ rt;
+                RDval = RSval ^ RTval;
                 break;
             case sll:
-                rd = rt << shamt;
+                RDval = RTval << shamt;
                 break;
             case srl:
-                rd = rs >> shamt;
+                RDval = RSval >> shamt;
                 break;
             case sra:
-                rd = rs >>> shamt;
+                RDval = RSval >>> shamt;
                 break;
             case sllv:
-                rd = rs << rt;
+                RDval = RSval << RTval;
                 break;
             case srav:
-                rd = rs >>> rt;
+                RDval = RSval >>> RTval;
                 break;
             case srlv:
-                rd = rs >> rt;
+                RDval = RSval >> RTval;
                 break;
             case slt:
-                rd = (rs < rt) ? 1 : 0;
+                RDval = (RSval < RTval) ? 1 : 0;
                 break;
             case sltu:
-                rd = ((rs & castUInt) < (rt & castUInt)) ? 1 : 0;
+                RDval = ((RSval & castUInt) < (RTval & castUInt)) ? 1 : 0;
                 break;
             case jr:
-                setPC(rs);
-                return true;
+                setPC(RSval);
+                return;
             case jalr:
                 setToRegister(getPC(), RegisterNames.getRegisterIndex("$ra"));
-                setPC(rs);
-                return true;
+                setPC(RSval);
+                return;
             case mfhi:
-                rd = hi;
+                RDval = hi;
                 break;
             case mflo:
-                rd = lo;
+                RDval = lo;
                 break;
             default:
-                return false;
+                throw new Exception("Unknown R-Type Instruction.");
         }
-        setToRegister(rd, command.getRD());
-        return true;
+        updateHandler.scheduleRegister(command.getRD());
+        setToRegister(RDval, command.getRD());
     }
 
-    private boolean IInstructionExecute(Instruction current) throws Exception {
+    private void IInstructionExecute(Instruction current, UpdateHandler updateHandler) throws Exception {
         ITypeInstruction command = (ITypeInstruction) current;
 
-        int RSValue = getFromRegisters(command.getRS());
-        int RTValue = getFromRegisters(command.getRT());
+        int RSval = getFromRegisters(command.getRS());
+        int RTval = getFromRegisters(command.getRT());
         short imm = command.getImmediate();
 
-        int Address = RSValue + imm;
+        int Address = RSval + imm;
 
         switch (command.getCommand()) {
             case lb:
-                RTValue = memory.getByte(Address);
+                RTval = memory.getByte(Address);
                 break;
             case lbu:
-                RTValue = Byte.toUnsignedInt(memory.getByte(Address));
+                RTval = Byte.toUnsignedInt(memory.getByte(Address));
                 break;
             case lh:
-                RTValue = memory.getHalfWord(Address);
+                RTval = memory.getHalfWord(Address);
                 break;
             case lhu:
-                RTValue = Short.toUnsignedInt(memory.getHalfWord((Address)));
+                RTval = Short.toUnsignedInt(memory.getHalfWord((Address)));
                 break;
             case lw:
-                RTValue = memory.getWord(Address);
+                RTval = memory.getWord(Address);
                 break;
             case sb:
-                memory.setByte(Address, (byte)RTValue);
+                updateHandler.scheduleMemory(Address >> 2);
+                memory.setByte(Address, (byte) RTval);
                 break;
             case sh:
-                memory.setHalfWord(Address, (short)RTValue);
+                updateHandler.scheduleMemory(Address >> 2);
+                memory.setHalfWord(Address, (short) RTval);
                 break;
             case sw:
-                memory.setWord(Address, RTValue);
+                updateHandler.scheduleMemory(Address >> 2);
+                memory.setWord(Address, RTval);
                 break;
             case lui:
-                RTValue = imm << 16;
+                RTval = imm << 16;
                 break;
             case andi:
-                RTValue = RSValue & imm;
+                RTval = RSval & imm;
                 break;
             case ori:
-                RTValue = RSValue | imm;
+                RTval = RSval | imm;
                 break;
             case xori:
-                RTValue = RSValue ^ imm;
+                RTval = RSval ^ imm;
                 break;
             case addi:
             case addiu:
-                RTValue = RSValue + imm;
+                RTval = RSval + imm;
                 break;
             case sltiu:
             case slti:
-                RTValue = RSValue < imm ? 1 : 0;
+                RTval = RSval < imm ? 1 : 0;
                 break;
             case beq:
-                if (RSValue == RTValue) setPC(BTA(imm));
+                if (RSval == RTval) setPC(BTA(imm));
                 break;
             case bne:
-                if (RSValue != RTValue) setPC(BTA(imm));
+                if (RSval != RTval) setPC(BTA(imm));
                 break;
             default:
-                return false;
+                throw new Exception("Unknown I-Type Instruction.");
         }
+        updateHandler.scheduleRegister(command.getRT());
 
-        setToRegister(RTValue, command.getRT()); // in case of jump RT will not change so it will set it's value with the same old value
-
-        return true;
+        setToRegister(RTval, command.getRT()); // in case of jump RT will not change so it will set it's value with the same old value
     }
 
-    private boolean JInstructionExecute(Instruction current) {
-        // TODO: execute all J type instructions here given an instruction of J type as a parameter and return false if you faced any error
-        // TODO: Also update here the program counter
+    private void JInstructionExecute(Instruction current, UpdateHandler updateHandler) throws Exception {
         JTypeInstruction command = (JTypeInstruction) current;
         int addr = command.getAddr();
 
@@ -270,17 +282,12 @@ public class Simulator {
                 setPC(JTA(addr));
                 break;
             default:
-                return false;
+                throw new Exception("Unknown J-Type Instruction.");
         }
-        return true;
     }
 
     public Memory getMemory() {
         return memory;
-    }
-
-    public Memory getText() {
-        return text;
     }
 
     public Memory getRegisters() {
