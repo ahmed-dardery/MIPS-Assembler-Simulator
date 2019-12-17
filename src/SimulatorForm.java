@@ -57,10 +57,17 @@ public class SimulatorForm extends JFrame {
     }
 
     private void buildMemory() {
-        DefaultTableModel model = (DefaultTableModel) memoryTable.getModel();
+        DefaultTableModel model = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 1;
+            }
+        };
+//        DefaultTableModel model = (DefaultTableModel) memoryTable.getModel();
         model.setColumnCount(0);
         model.addColumn("Address");
         model.addColumn("Value");
+        memoryTable.setModel(model);
     }
 
     private void resyncMemory() {
@@ -73,10 +80,17 @@ public class SimulatorForm extends JFrame {
     }
 
     private void buildRegisters() {
-        DefaultTableModel model = (DefaultTableModel) registerTable.getModel();
+        DefaultTableModel model = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 1;
+            }
+        };
+//        DefaultTableModel model = (DefaultTableModel) registerTable.getModel();
         model.setColumnCount(0);
         model.addColumn("Register");
         model.addColumn("Content");
+        registerTable.setModel(model);
     }
 
     private void resyncRegisters() {
