@@ -26,12 +26,15 @@ public abstract class Instruction {
         Instruction ret;
         if (jType(cmd)) {
             ret = new JTypeInstruction(JTypeInstruction.JTypeNames.valueOf(cmd), args[1]);
-        } else if (iType(cmd)) {
+        }
+        else if (iType(cmd,result)) {
             ret = new ITypeInstruction(ITypeInstruction.ITypeNames.valueOf(cmd), args[1], args[2], args[3]);
-        } else if (rType(cmd)) {
+        }
+        else if (rType(cmd,result)) {
             ret = new RTypeInstruction(RTypeInstruction.RTypeNames.valueOf(cmd), args[1], args[2], args[3]);
-        } else {
-            System.out.println("will return null");
+        }
+        else {
+            System.out.println("bad input");
             return null;
         }
         return ret;
@@ -54,23 +57,30 @@ public abstract class Instruction {
         return res;
     }
 
-    private static boolean rType(String input) {
+    private static boolean rType(String input,String [] result) {
         try {
             RTypeInstruction.RTypeNames.valueOf(input);
-            return true;
-        } catch (Exception ignored) {
+            RTypeInstruction.Reg decodeOrder = RTypeInstruction.RTypeNames.getReg(input);
+            if(checkArgs(result,decodeOrder.toString()))
+                return true;
+        }
+        catch (Exception ignored) {
             return false;
         }
+        return false;
     }
 
-    private static boolean iType(String input) {
+    public static boolean iType(String input,String [] result) {
         try {
             ITypeInstruction.ITypeNames.valueOf(input);
-            return true;
-        } catch (Exception ignored) {
+            ITypeInstruction.Reg decodeOrder = ITypeInstruction.ITypeNames.getReg(input);
+            if(checkArgs(result,decodeOrder.toString()))
+                return true;
+        }
+        catch (Exception ignored) {
             return false;
         }
-
+        return false;
     }
 
     private static boolean jType(String input) {
@@ -82,6 +92,47 @@ public abstract class Instruction {
         }
     }
 
+    public static boolean checkArgs(String[] result,String decodeOrder) {
+        System.out.println(decodeOrder);
+        switch (decodeOrder) {
+            case "RT_RS_IMM":
+            case "RD_RT_SHAMT":
+                if (result.length!=4 || !result[1].startsWith("$") || !result[2].startsWith("$") || !result[3].matches("\\d+"))
+                    return false;
+            break;
+
+            case "RD_RS_RT":
+            case "RD_RT_RS":
+                if(result.length!=4 || !result[1].startsWith("$") || !result[2].startsWith("$") || !result[3].startsWith("$"))
+                    return false;
+                break;
+
+            case"RT_IMM_RS":
+                if(result.length!=4 || !result[1].startsWith("$") || !result[2].matches("\\d+") || !result[3].startsWith("$"))
+                    return false;
+                break;
+
+            case"RT_IMM":
+                if(result.length!=3 || !result[1].startsWith("$") || !result[2].matches("\\d+"))
+                    return false;
+                break;
+
+            case"RS_RT":
+                if(result.length!=3 || !result[1].startsWith("$") || !result[2].startsWith("$"))
+                    return false;
+                break;
+
+            case"RS":
+            case"RD":
+                if(result.length!=2 || !result[1].startsWith("$"))
+                    return false;
+                break;
+
+                default:
+                    return false;
+        }
+        return true;
+    }
 
     /**
      * @return the instruction type of the class
@@ -116,4 +167,6 @@ public abstract class Instruction {
     int adjustBits(int value, int bits, int shift) {
         return (value & ((1 << bits) - 1)) << shift;
     }
+
+
 }

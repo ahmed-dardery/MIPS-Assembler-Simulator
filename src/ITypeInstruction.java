@@ -31,6 +31,10 @@ public class ITypeInstruction extends Instruction {
             this.opcode = opcode;
             this.decodeOrder = decodeOrder;
         }
+
+        public static Reg getReg(String code){
+            return ITypeNames.valueOf(code).decodeOrder;
+        }
     }
 
     private ITypeNames command;

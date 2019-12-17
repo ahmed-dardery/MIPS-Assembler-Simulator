@@ -17,6 +17,7 @@ public class RTypeInstruction extends Instruction {
         jr(8, Reg.RS), jalr(9, Reg.RS),
         mfhi(16, Reg.RD), mflo(18, Reg.RD),
         mult(24, Reg.RS_RT), multu(25, Reg.RS_RT), div(26, Reg.RS_RT), divu(27, Reg.RS_RT),
+
         add(32), addu(33), sub(34), subu(35),
         and(36), or(37), xor(38), nor(39),
         slt(42), sltu(43);
@@ -31,6 +32,10 @@ public class RTypeInstruction extends Instruction {
         RTypeNames(int funct, Reg decodeOrder) {
             this.funct = funct;
             this.decodeOrder = decodeOrder;
+        }
+
+        public static Reg getReg(String input) {
+            return RTypeNames.valueOf(input).decodeOrder;
         }
     }
 
