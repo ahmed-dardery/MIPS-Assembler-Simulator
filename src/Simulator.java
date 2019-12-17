@@ -4,69 +4,86 @@ import java.util.List;
 
 public class Simulator {
     private List<Instruction> instructions;
-    private int nextInstrcutionIdx; // Acts like program counter but uses index in the list | -1 -> finish
-    private final int memoryOffset; // start of the program in the memory
-    static final int MEMORY_SIZE = (1 << 15), REGISTER_SIZE = (1 << 5), BYTE = 0xFF, HALF_WORD = 0xFF, MEMORY_START = 0x00001000;
-    private int[] memory, registers;
-    private int hi = 0, lo = 0;
+    private int programCounter; // Acts like program counter but uses index in the list | -1 -> finish
+    private static final int MEMORY_SIZE = (1 << 15), REGISTER_SIZE = (1 << 5);
+    private Memory memory;
+    private Memory text;
+    private Memory registers;
+    private int hi = 0;
+    private int lo = 0;
 
-    Simulator(List<Instruction> instructions, int memoryOffset, int[] memory, int[] registers) {
+    Simulator(List<Instruction> instructions) {
         this.instructions = instructions;
-        this.memoryOffset = memoryOffset;
-        this.memory = memory;
-        this.registers = registers;
+        this.memory = new Memory(MEMORY_SIZE);
+        this.text = new Memory(MEMORY_SIZE);
+        this.registers = new Memory(REGISTER_SIZE);
 
-        fillMemoryWithInstructions();
-    }
-
-    Simulator(List<Instruction> instructions, int memoryOffset) {
-        this(instructions, memoryOffset, new int[MEMORY_SIZE], new int[REGISTER_SIZE]);
-    }
-
-    private void fillMemoryWithInstructions() {
-        //@TODO: Put the instructions list in the memory
-        //TODO: change the memory type to String if you want to store the Machine Code as Hex
-        int memoryOffset = 0;
-        for (Instruction instruction : instructions)
-            memory[memoryOffset++] = Integer.parseInt(instruction.toMachineLanguage(), 2);
+        this.memory.fillMemoryWithInstructions(instructions);
     }
 
     public boolean executeNextInstruction() throws Exception {
-        Instruction current = getNextInstruction();
-
+        Instruction current = fetchNextInstruction();
+        System.out.println(current.toAssembly());
         Instruction.instructionType currentInstructionType = current.getInstructionType();
+        advancePC();
 
-        if (currentInstructionType == Instruction.instructionType.RTypeInstruction) return RInstructionExecute(current);
-        else if (currentInstructionType == Instruction.instructionType.ITypeInstruction)
-            return IInstructionExecute(current);
-        else if (currentInstructionType == Instruction.instructionType.JTypeInstruction)
-            return JInstructionExecute(current);
-
-        return false;
+        switch (currentInstructionType) {
+            case RTypeInstruction:
+                return RInstructionExecute(current);
+            case ITypeInstruction:
+                return IInstructionExecute(current);
+            case JTypeInstruction:
+                return JInstructionExecute(current);
+            default:
+                return false;
+        }
     }
 
     public boolean executeAllInstructions() throws Exception {
         while (executeNextInstruction()) {
-            if (nextInstrcutionIdx == -1) return true; // end of the program
+            if (programCounter == -1) return true; // end of the program
         }
         return false;
     }
 
-    public int getProgramCounter() {
-        //TODO: find appropriate way to return the program counter given index in the list and offset in memory
-        //PC represents the offset of the memory and increased by 4
-        //Because the memory divided into blocks of 4 bytes
-        return nextInstrcutionIdx * 4;
+    private Instruction fetchNextInstruction() throws Exception {
+        if (programCounter >> 2 >= instructions.size())
+            throw new Exception("terminated.");
+        else
+            return instructions.get(programCounter >> 2);
     }
 
-    private Instruction getNextInstruction() {
-        // TODO: change here if you want it as stored program concept
-        return instructions.get(nextInstrcutionIdx);
+    private int getFromRegisters(int registerIndex) {
+        return registers.getValue(registerIndex);
     }
 
-    private boolean RInstructionExecute(Instruction current) throws Exception {
-        // TODO: execute all r type instructions here given an instruction of R type as a parameter and return false if you faced any error
-        // TODO: Also update here the program counter
+    private void setToRegister(int data, int registerIndex) {
+        registers.setValue(registerIndex, data);
+    }
+
+    private int BTA(short imm) {
+        return getPC() + (int) imm << 2;
+    }
+
+    private int JTA(int addr) {
+        return addr << 2;
+    }
+
+    //Notice that Program Counter is NOT the index of the instruction to be executed, it is the address of memory
+    //that the next instruction is at.
+    public int getPC() {
+        return programCounter;
+    }
+
+    private void setPC(int value) {
+        programCounter = value;
+    }
+
+    private void advancePC() {
+        programCounter += 4;
+    }
+
+    private boolean RInstructionExecute(Instruction current) {
         final long castUInt = 0x00000000ffffffffL;
         RTypeInstruction command = (RTypeInstruction) current;
         int rd = getFromRegisters(command.getRD());
@@ -83,7 +100,11 @@ public class Simulator {
                 }
                 break;
             case sub:
-                rd = rs - rt;
+                try {
+                    rd = Math.subtractExact(rs, rt);
+                } catch (ArithmeticException e) {
+                    System.out.println(e);
+                }
                 break;
             case div:
                 lo = rs / rt;
@@ -101,8 +122,8 @@ public class Simulator {
                 rd = rs - rt;
                 break;
             case divu:
-                lo = (int) ((rs & castUInt) / (rt & castUInt));
-                hi = (int) ((rs & castUInt) % (rt & castUInt));
+                lo = Integer.divideUnsigned(rs, rt);
+                hi = Integer.remainderUnsigned(rs, rt);
                 break;
             case multu:
                 long tempu = (rs & castUInt) * (rt & castUInt);
@@ -146,11 +167,11 @@ public class Simulator {
                 rd = ((rs & castUInt) < (rt & castUInt)) ? 1 : 0;
                 break;
             case jr:
-                gotoInstruction(rs);
+                setPC(rs);
                 return true;
             case jalr:
-                gotoInstruction(rs);
-                setToRegister(nextInstrcutionIdx + 1, RegisterNames.getRegisterIndex("$ra"));
+                setToRegister(getPC(), RegisterNames.getRegisterIndex("$ra"));
+                setPC(rs);
                 return true;
             case mfhi:
                 rd = hi;
@@ -162,39 +183,42 @@ public class Simulator {
                 return false;
         }
         setToRegister(rd, command.getRD());
-        increasePC();
         return true;
     }
 
-    private boolean IInstructionExecute(Instruction current) {
-        // TODO: execute all I type instructions here given an instruction of I type as a parameter and return false if you faced any error
-        // TODO: Also update here the program counter
+    private boolean IInstructionExecute(Instruction current) throws Exception {
         ITypeInstruction command = (ITypeInstruction) current;
 
         int RSValue = getFromRegisters(command.getRS());
         int RTValue = getFromRegisters(command.getRT());
-        int imm = command.getImmediate();
+        short imm = command.getImmediate();
+
+        int Address = RSValue + imm;
 
         switch (command.getCommand()) {
             case lb:
+                RTValue = memory.getByte(Address);
+                break;
             case lbu:
-                RTValue = getFromMemory(imm) & BYTE;
+                RTValue = Byte.toUnsignedInt(memory.getByte(Address));
                 break;
             case lh:
+                RTValue = memory.getHalfWord(Address);
+                break;
             case lhu:
-                RTValue = getFromMemory(imm) & HALF_WORD;
+                RTValue = Short.toUnsignedInt(memory.getHalfWord((Address)));
                 break;
             case lw:
-                RTValue = getFromMemory(imm);
+                RTValue = memory.getWord(Address);
                 break;
             case sb:
-                setToMemory(RTValue & BYTE, imm);
+                memory.setByte(Address, (byte)RTValue);
                 break;
             case sh:
-                setToMemory(RTValue & HALF_WORD, imm);
+                memory.setHalfWord(Address, (short)RTValue);
                 break;
             case sw:
-                setToMemory(RTValue, imm);
+                memory.setWord(Address, RTValue);
                 break;
             case lui:
                 RTValue = imm << 16;
@@ -217,17 +241,16 @@ public class Simulator {
                 RTValue = RSValue < imm ? 1 : 0;
                 break;
             case beq:
-                if (RSValue == RTValue) nextInstrcutionIdx = gotoInstruction(imm);
+                if (RSValue == RTValue) setPC(BTA(imm));
                 break;
             case bne:
-                if (RSValue != RTValue) nextInstrcutionIdx = gotoInstruction(imm);
+                if (RSValue != RTValue) setPC(BTA(imm));
                 break;
             default:
                 return false;
         }
 
         setToRegister(RTValue, command.getRT()); // in case of jump RT will not change so it will set it's value with the same old value
-        increasePC();
 
         return true;
     }
@@ -236,15 +259,15 @@ public class Simulator {
         // TODO: execute all J type instructions here given an instruction of J type as a parameter and return false if you faced any error
         // TODO: Also update here the program counter
         JTypeInstruction command = (JTypeInstruction) current;
-        int add = command.getAddr();
+        int addr = command.getAddr();
 
         switch (command.getCommand()) {
             case j:
-                nextInstrcutionIdx = gotoInstruction(add);
+                setPC(JTA(addr));
                 break;
             case jal:
-                nextInstrcutionIdx = gotoInstruction(add);
-                setToRegister(nextInstrcutionIdx + 1, RegisterNames.getRegisterIndex("$ra"));
+                setToRegister(getPC(), RegisterNames.getRegisterIndex("$ra"));
+                setPC(JTA(addr));
                 break;
             default:
                 return false;
@@ -252,40 +275,31 @@ public class Simulator {
         return true;
     }
 
-    private int gotoInstruction(int label) {
-        //@TODO: make it takes label as input and returns label index
-        return 0;
+    public Memory getMemory() {
+        return memory;
     }
 
-    // Takes index not offset
-    private int getFromMemory(int memoryIndex) {
-        return memory[memoryIndex * 4 + MEMORY_START];
+    public Memory getText() {
+        return text;
     }
 
-    // Takes index not offset
-    private boolean setToMemory(int data, int memoryIndex) {
-        memory[memoryIndex * 4 + MEMORY_START] = data;
-        return true;
+    public Memory getRegisters() {
+        return registers;
     }
 
-    private int getFromRegisters(int registerIndex) {
-        return registers[registerIndex];
+    public int getHiRegister() {
+        return hi;
     }
 
-    private boolean setToRegister(int data, int registerIndex) {
-        registers[registerIndex] = data;
-        return true;
+    public int getLoRegister() {
+        return lo;
     }
 
-    private void increasePC() {
-        if (nextInstrcutionIdx++ >= instructions.size())
-            nextInstrcutionIdx = -1; // update the next instruction and if you reach the end make it -1
+    public void setHiRegister(int hi) {
+        this.hi = hi;
     }
 
-    private void changePCValue(int value) throws Exception {
-        if (value > instructions.size())
-            throw new Exception("Value (" + value + ") out of bound");
-        else
-            nextInstrcutionIdx = value;
+    public void setLoRegister(int lo) {
+        this.lo = lo;
     }
 }

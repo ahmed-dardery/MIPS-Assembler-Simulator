@@ -1,147 +1,118 @@
-import java.util.ArrayList;
+import java.util.Map;
 
-//TODO: figure out what to do with jump instructions (because they jump to a label)
 public abstract class Instruction {
-	
-	public enum instructionType{
-		RTypeInstruction,
-		JTypeInstruction,
-		ITypeInstruction;
-		
-	}
-	
-	
-	
-	public Instruction(){
-		
-	}
-	
-	public abstract instructionType getInstructionType();
-	
-	
-	public static Instruction getInstructionObject(String input) {
-		input=makeStringReadyToUse(input);
-		
-		String result[] =splitArgs(input); 
-		if(result == null) return null;
-		
-    	String cmd=result[0];
-    	
-    	int args[]=getRegNumber(result);
-    	if(args==null) return null;
-    	
-    	Instruction type;
-		if(jType(cmd)) {
-			type=new JTypeInstruction(JTypeInstruction.JTypeNames.valueOf(cmd),args[1]);
-		}
-		
-		else if(iType(cmd)) {
-			type=new ITypeInstruction(ITypeInstruction.ITypeNames.valueOf(cmd),args[1],args[2],args[3]);
-		}
-		
-		else if(rType(cmd)) {
-			type=new RTypeInstruction(RTypeInstruction.RTypeNames.valueOf(cmd),args[1],args[2],args[3]);
-		}
-		else {
-			System.out.println("will return null");
-			return null;
-		}
-		return type;
-	}
-	
-    public static String makeStringReadyToUse(String input) {
-    	if(input.startsWith(" ")) {
-    		int loc = input.indexOf("\\w");
-    		input=input.substring(loc);
-    	}
-    	input=input.replace("(",",");
-    	input=input.replace(")","");
-    	input=input.replaceAll("\\s+,\\s+|\\s+,|,\\s+",",");
-    	return input;
-	}
+    static final boolean BRANCH_DELAY_SLOT = true;
 
-    public static String[] splitArgs(String input) {
-    	String result[]=input.split("\\s+|,");/*
-    	while(result.length<4) {
-    		int length=result.length;
-    		result[length+1]="0";
-    	}*/
-    	if(result.length<4) return null;
-    	return result;
-    	
+    public enum instructionType {
+        RTypeInstruction,
+        JTypeInstruction,
+        ITypeInstruction
     }
-	
-	public static int[] getRegNumber(String []args) {
-		int [] res= new int[args.length];
-		for(int i=1;i<args.length;++i) {
-			if(!args[i].startsWith("$")) {
-				res[i]=Integer.parseInt(args[i]);
-				continue;
-			}
-			res[i]=RegisterNames.getRegisterIndex(args[i]);
-			if(res[i]==-1) return null;
-		}
-		return res;
-	}
 
-	private static boolean rType(String input) {
-    	for(RTypeInstruction.RTypeNames tst :RTypeInstruction.RTypeNames.values()) {
-    		if(tst.toString().equals(input)) return true;
-		
-    	}
-    	return false;
-	}
+    public static Instruction parseString(String input, int idx, Map<String, Integer> labelResolver) {
+        input = input.trim().replace("(", ",").replace(")", "").replaceAll("\\s+,\\s+|\\s+,|,\\s+", ",");
 
-	private static boolean iType(String input) {
-    	for(ITypeInstruction.ITypeNames tst :ITypeInstruction.ITypeNames.values()) {
-    		if(tst.toString().equals(input)) return true;
-		
-    	}
-    	return false;
-		
-	}
+        String[] result = input.split("\\s+|,");
 
-	private static boolean jType(String input) {
-    	for(JTypeInstruction.JTypeNames tst :JTypeInstruction.JTypeNames.values()) {
-    		if(tst.toString().equals(input)) return true;
-		
-    	}
-    	return false;
-		
-	}
+        String cmd = result[0];
 
-	/**
+        if (jType(cmd)) idx = 0;
+        else if (BRANCH_DELAY_SLOT) idx++;
+
+        int[] args = parseArguments(result, idx, labelResolver);
+
+
+        Instruction ret;
+        if (jType(cmd)) {
+            ret = new JTypeInstruction(JTypeInstruction.JTypeNames.valueOf(cmd), args[1]);
+        } else if (iType(cmd)) {
+            ret = new ITypeInstruction(ITypeInstruction.ITypeNames.valueOf(cmd), args[1], args[2], args[3]);
+        } else if (rType(cmd)) {
+            ret = new RTypeInstruction(RTypeInstruction.RTypeNames.valueOf(cmd), args[1], args[2], args[3]);
+        } else {
+            System.out.println("will return null");
+            return null;
+        }
+        return ret;
+    }
+
+
+    private static int[] parseArguments(String[] args, int idx, Map<String, Integer> labelResolver) {
+        int[] res = new int[4];
+        for (int i = 1; i < Math.min(args.length, 4); ++i) {
+            if (!args[i].startsWith("$")) {
+                Integer ret = labelResolver.get(args[i]);
+                if (ret == null)
+                    res[i] = Integer.parseInt(args[i]);
+                else
+                    res[i] = ret - idx;
+            } else {
+                res[i] = RegisterNames.getRegisterIndex(args[i]);
+            }
+        }
+        return res;
+    }
+
+    private static boolean rType(String input) {
+        try {
+            RTypeInstruction.RTypeNames.valueOf(input);
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    private static boolean iType(String input) {
+        try {
+            ITypeInstruction.ITypeNames.valueOf(input);
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
+
+    }
+
+    private static boolean jType(String input) {
+        try {
+            JTypeInstruction.JTypeNames.valueOf(input);
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+
+    /**
+     * @return the instruction type of the class
+     */
+    public abstract instructionType getInstructionType();
+
+    /**
      * @return short instruction name in assembly
      */
-	abstract String getInstructionName();
+    public abstract String getInstructionName();
+
     /**
      * @return id of instruction, it is opcode for non-R type and concatenation of opcode and funct for R-type
      */
-    abstract int getIdentifier();
+    public abstract int getIdentifier();
+
     /**
      * @return op code of instruction, 0 for R-type
      */
-    abstract int getOpCode();
+    public abstract int getOpCode();
+
     /**
      * @return Assembly String for the instruction, for example "add $s0, $s1, $s2".
      */
-    abstract String toAssembly();
+    public abstract String toAssembly();
+
     /**
      * @return Machine Language for the instruction in binary formation.
      */
-    abstract String toMachineLanguage();
-    
-    public static void main(String args[]) {
-    	String input= "add $a0, $a0,$a0";
-    	String input2= "addi $a0, $a0,5";
-    	String input3= "sllv $a0, $a0,$a0";
-    	ArrayList<Instruction>in = new ArrayList<Instruction>();
-    	in.add(getInstructionObject(input));
-    	in.add(getInstructionObject(input2));
-    	in.add(getInstructionObject(input3));
-    	for(Instruction t:in) {
-    		System.out.println(t.getInstructionType());
-    	}
+    public abstract int toMachineLanguage();
 
+    int adjustBits(int value, int bits, int shift) {
+        return (value & ((1 << bits) - 1)) << shift;
     }
 }

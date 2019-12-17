@@ -127,16 +127,16 @@ public class ITypeInstruction extends Instruction {
     }
 
     @Override
-    public String toMachineLanguage() {
+    public int toMachineLanguage() {
         //op (6 bits), rs (5 bits), rt (5 bits), imm (16 bits)
-        return Integer.toBinaryString(getOpCode() | (1 << 6)).substring(1) +
-                Integer.toBinaryString(getRS() | (1 << 5)).substring(1) +
-                Integer.toBinaryString(getRT() | (1 << 5)).substring(1) +
-                Integer.toBinaryString((int) getImmediate() | (1 << 16)).substring(1);
+        return adjustBits(getOpCode(), 6, 5 + 5 + 16) |
+                adjustBits(getRS(), 5, 5 + 16) |
+                adjustBits(getRT(), 5, 16) |
+                adjustBits(getImmediate(), 16, 0);
     }
 
-	@Override
-	public instructionType getInstructionType() {
-		return Instruction.instructionType.ITypeInstruction;
-	}
+    @Override
+    public instructionType getInstructionType() {
+        return Instruction.instructionType.ITypeInstruction;
+    }
 }

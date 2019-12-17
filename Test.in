@@ -1,0 +1,9 @@
+    addi $t0, $0, 5
+    addi $t1, $0, 1
+loop:
+    beq $t0 $0 escape
+    add $t1, $t1, $t1
+    addi $t0, $t0, -1
+    j loop
+escape:
+    addi $t1, $t1, -1

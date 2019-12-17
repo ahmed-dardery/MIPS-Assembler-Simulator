@@ -8,6 +8,7 @@ public class RTypeInstruction extends Instruction {
         RS,
         RD
     }
+
     enum RTypeNames {
         sll(0, Reg.RD_RT_SHAMT), srl(2, Reg.RD_RT_SHAMT), sra(3, Reg.RD_RT_SHAMT),
 
@@ -139,18 +140,19 @@ public class RTypeInstruction extends Instruction {
         }
     }
 
-    public String toMachineLanguage() {
+
+    public int toMachineLanguage() {
         //op[zero] (6 bits), rs (5 bits), rt (5 bits), rd (5 bits) shamt (5 bits), funct (6 bits)
-        return Integer.toBinaryString(getOpCode() | (1 << 6)).substring(1) +
-                Integer.toBinaryString(getRS() | (1 << 5)).substring(1) +
-                Integer.toBinaryString(getRT() | (1 << 5)).substring(1) +
-                Integer.toBinaryString(getRD() | (1 << 5)).substring(1) +
-                Integer.toBinaryString(getShamt() | (1 << 5)).substring(1) +
-                Integer.toBinaryString(getCommand().funct | (1 << 6)).substring(1);
+        return adjustBits(getOpCode(), 6, 5 + 5 + 5 + 5 + 6) |
+                adjustBits(getRS(), 5, 5 + 5 + 5 + 6) |
+                adjustBits(getRT(), 5, 5 + 5 + 6) |
+                adjustBits(getRD(), 5, 5 + 6) |
+                adjustBits(getShamt(), 5, 6) |
+                adjustBits(getCommand().funct, 6, 0);
     }
 
-	@Override
-	public instructionType getInstructionType() {
-		return Instruction.instructionType.RTypeInstruction;
-	}
+    @Override
+    public instructionType getInstructionType() {
+        return Instruction.instructionType.RTypeInstruction;
+    }
 }

@@ -47,13 +47,12 @@ public class JTypeInstruction extends Instruction {
     }
 
     @Override
-    public String toMachineLanguage() {
-        return Integer.toBinaryString(getOpCode() | (1 << 6)).substring(1) +
-                Integer.toBinaryString(getAddr() | (1 << 26)).substring(1);
+    public int toMachineLanguage() {
+        return adjustBits(getOpCode(), 6, 26) | adjustBits(getAddr(), 26, 0);
     }
 
-	@Override
-	public instructionType getInstructionType() {
-		return Instruction.instructionType.JTypeInstruction;
-	}
+    @Override
+    public instructionType getInstructionType() {
+        return Instruction.instructionType.JTypeInstruction;
+    }
 }
