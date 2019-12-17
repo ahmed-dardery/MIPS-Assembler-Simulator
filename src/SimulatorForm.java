@@ -142,6 +142,10 @@ public class SimulatorForm extends JFrame {
         } catch (Exception ex) {
             addException(ex);
         }
+        resyncMemory();
+        resyncRegisters();
+        textField1.setText(String.valueOf(simulator.getPC()));
+
     }
 
     private void runSingleInstruction() {

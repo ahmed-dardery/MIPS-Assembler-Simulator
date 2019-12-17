@@ -2,22 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a3ebaf77-304f-4ad9-829c-aa7df49727be" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/UpdateHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_12_2019_5_33_PM__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_12_2019_5_33_PM__Default_Changelist_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_13_2019_2_36_PM__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_13_2019_2_36_PM__Default_Changelist_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test.in" beforeDir="false" afterPath="$PROJECT_DIR$/Test.in" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ITypeInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ITypeInstruction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Instruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Instruction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/JTypeInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/JTypeInstruction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Memory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Memory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Parser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/RTypeInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/RTypeInstruction.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Simulator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SimulatorForm.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatorForm.form" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SimulatorForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatorForm.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -149,7 +135,14 @@
       <option name="project" value="LOCAL" />
       <updated>1576105916310</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Implemented GUI">
+      <created>1576613378084</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1576613378084</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -171,7 +164,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added getters" />
     <MESSAGE value="Added structure of Simulator" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added structure of Simulator" />
+    <MESSAGE value="Implemented GUI" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented GUI" />
   </component>
   <component name="WindowStateProjectService">
     <state x="361" y="6" key="CommitChangelistDialog2" timestamp="1576082085549">

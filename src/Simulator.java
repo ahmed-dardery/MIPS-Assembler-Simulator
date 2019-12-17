@@ -31,6 +31,7 @@ public class Simulator {
     }
 
     public void executeNextInstruction(UpdateHandler updateHandler) throws Exception {
+        if (updateHandler == null) updateHandler = new UpdateHandler();
         Instruction current = fetchNextInstruction();
 
         Instruction.InstructionType currentInstructionType = current.getInstructionType();
