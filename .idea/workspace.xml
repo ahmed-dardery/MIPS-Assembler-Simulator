@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a3ebaf77-304f-4ad9-829c-aa7df49727be" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_12_2019_5_33_PM__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_12_2019_5_33_PM__Default_Changelist_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_13_2019_2_36_PM__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_13_2019_2_36_PM__Default_Changelist_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Simulator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SimulatorForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatorForm.java" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,8 +15,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -25,63 +25,75 @@
     <option name="UPDATE_TYPE" value="MERGE" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-96" />
+    <option name="width" value="1382" />
+    <option name="height" value="744" />
+  </component>
   <component name="ProjectId" id="1Ucu3sEOtogUc0GSbCPL6ttW2cT" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1576340039577" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1576550864265" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
   </component>
   <component name="RecentsManager">
-    <key name="CreateClassDialog.RecentsKey">
+    <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Programming\Github\MIPS-Assembler-Simulator\src" />
-      <recent name="D:\Programming\Github\MIPS-Assembler-Simulator\src\GUI" />
-      <recent name="D:\Programming\Github\MIPS-Assembler-Simulator" />
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\MIPS-Assembler-Simulator\src" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Instruction" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Instruction" />
+      <module name="MIPS-Assembler-Simulator" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="MIPS-Assembler-Simulator" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="SimulatorForm" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="SimulatorForm" />
+      <module name="MIPS-Assembler-Simulator" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Instruction" />
+      <item itemvalue="Application.SimulatorForm" />
+      <item itemvalue="Application.Main" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
+        <item itemvalue="Application.SimulatorForm" />
         <item itemvalue="Application.Instruction" />
       </list>
     </recent_temporary>
   </component>
   <component name="ServiceViewManager">
-    <option name="allServicesViewState">
-      <serviceView>
-        <treeState>
-          <expand />
-          <select />
-        </treeState>
-      </serviceView>
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
     </option>
   </component>
   <component name="SvnConfiguration">
@@ -98,7 +110,6 @@
       <workItem from="1575707234530" duration="4983000" />
       <workItem from="1575791205559" duration="246000" />
       <workItem from="1576007023137" duration="2426000" />
-      <workItem from="1576528809470" duration="12123000" />
     </task>
     <task id="LOCAL-00001" summary="added getters">
       <created>1576008419941</created>
@@ -135,12 +146,12 @@
       <option name="project" value="LOCAL" />
       <updated>1576105916310</updated>
     </task>
-    <task id="LOCAL-00006" summary="Implemented GUI">
-      <created>1576613378084</created>
+    <task id="LOCAL-00006" summary="Added Simulator Form">
+      <created>1576548488886</created>
       <option name="number" value="00006" />
       <option name="presentableId" value="LOCAL-00006" />
       <option name="project" value="LOCAL" />
-      <updated>1576613378084</updated>
+      <updated>1576548488886</updated>
     </task>
     <option name="localTasksCounter" value="7" />
     <servers />
@@ -164,14 +175,34 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added getters" />
     <MESSAGE value="Added structure of Simulator" />
-    <MESSAGE value="Implemented GUI" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented GUI" />
+    <MESSAGE value="Added Simulator Form" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Simulator Form" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="223" y="67" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1576613957775">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="223" y="67" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1576613957775" />
     <state x="361" y="6" key="CommitChangelistDialog2" timestamp="1576082085549">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="361" y="6" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1576082085549" />
+    <state width="1493" height="210" key="GridCell.Tab.0.bottom" timestamp="1576614219205">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1576614219205" />
+    <state width="1493" height="210" key="GridCell.Tab.0.center" timestamp="1576614219204">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1576614219204" />
+    <state width="1493" height="210" key="GridCell.Tab.0.left" timestamp="1576614219204">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1576614219204" />
+    <state width="1493" height="210" key="GridCell.Tab.0.right" timestamp="1576614219205">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1576614219205" />
     <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1576082089035">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
