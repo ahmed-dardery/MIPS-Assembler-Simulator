@@ -42,7 +42,6 @@ public class JTypeInstruction extends Instruction {
 
     @Override
     public String toAssembly() {
-        //TODO: jump label
         return String.format("%s %d", getInstructionName(), getAddr());
     }
 

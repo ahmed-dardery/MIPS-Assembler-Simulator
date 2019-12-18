@@ -119,7 +119,6 @@ public class ITypeInstruction extends Instruction {
                         getImmediate(),
                         RegisterNames.getRegisterIdentifier(getRS()));
             case RS_RT_LABEL:
-                //TODO: change immediate to label
                 return String.format("%s %s, %s, %d",
                         getInstructionName(),
                         RegisterNames.getRegisterIdentifier(getRS()),

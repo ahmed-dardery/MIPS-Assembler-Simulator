@@ -29,6 +29,8 @@ public class SimulatorForm extends JFrame {
     private JTextField currebtInstructionTxt;
     private JTextField textField1;
     private JTable textTable;
+    private JTextField lowtxt;
+    private JTextField hightxt;
 
     private String assemblyCode;
 
@@ -86,6 +88,8 @@ public class SimulatorForm extends JFrame {
         model.addColumn("Register");
         model.addColumn("Content");
         registerTable.setModel(model);
+        lowtxt.setText(simulator.getLoRegister()+"");
+        hightxt.setText(simulator.getHiRegister()+"");
     }
 
     private void resyncRegisters() {
@@ -95,6 +99,8 @@ public class SimulatorForm extends JFrame {
         for (int i = 0; i < mem.getMemorySize(); i++) {
             model.addRow(new Object[]{RegisterNames.getRegisterIdentifier(i), mem.getValue(i)});
         }
+        lowtxt.setText(simulator.getLoRegister()+"");
+        hightxt.setText(simulator.getHiRegister()+"");
     }
 
     SimulatorForm(Simulator s) {
@@ -172,7 +178,8 @@ public class SimulatorForm extends JFrame {
                 model.setValueAt(simulator.getRegisters().getValue(v), v, 1);
             }
             if (uh.getScheduledLoHi()){
-                //TODO: update LO and HI textboxes.
+                lowtxt.setText(simulator.getLoRegister()+"");
+                hightxt.setText(simulator.getHiRegister()+"");
             }
 
         } catch (Exception ex) {
@@ -214,6 +221,8 @@ public class SimulatorForm extends JFrame {
         for (int i = 0; i < simulator.getRegisters().getMemorySize(); ++i) {
             simulator.getRegisters().setValue(i, 0);
         }
+        simulator.setHiRegister(0);
+        simulator.setLoRegister(0);
         resyncRegisters();
     }
 }
