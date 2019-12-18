@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a3ebaf77-304f-4ad9-829c-aa7df49727be" name="Default Changelist" comment="Refactoring">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_12_2019_5_33_PM__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_12_2019_5_33_PM__Default_Changelist_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_13_2019_2_36_PM__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_13_2019_2_36_PM__Default_Changelist_.xml" afterDir="false" />
+    <list default="true" id="a3ebaf77-304f-4ad9-829c-aa7df49727be" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MIPS-Assembler-Simulator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/MIPS-Assembler-Simulator.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ITypeInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ITypeInstruction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/JTypeInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/JTypeInstruction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SimulatorForm.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatorForm.form" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SimulatorForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatorForm.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -133,7 +125,7 @@
       <workItem from="1576007023137" duration="2426000" />
       <workItem from="1576619469545" duration="7609000" />
       <workItem from="1576671490329" duration="201000" />
-      <workItem from="1576674502549" duration="801000" />
+      <workItem from="1576674502549" duration="1423000" />
     </task>
     <task id="LOCAL-00001" summary="added getters">
       <created>1576008419941</created>
@@ -184,7 +176,14 @@
       <option name="project" value="LOCAL" />
       <updated>1576614388657</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="updated high and low">
+      <created>1576675317137</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1576675317137</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -222,7 +221,8 @@
     <MESSAGE value="Added structure of Simulator" />
     <MESSAGE value="Added Simulator Form" />
     <MESSAGE value="Refactoring" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactoring" />
+    <MESSAGE value="updated high and low" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated high and low" />
   </component>
   <component name="WindowStateProjectService">
     <state x="223" y="67" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1576674606997">
@@ -233,10 +233,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="574" y="121" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1576614836212" />
-    <state x="361" y="6" key="CommitChangelistDialog2" timestamp="1576614387719">
+    <state x="361" y="6" key="CommitChangelistDialog2" timestamp="1576675315906">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="361" y="6" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1576614387719" />
+    <state x="361" y="6" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1576675315906" />
     <state width="1493" height="210" key="GridCell.Tab.0.bottom" timestamp="1576675191587">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -253,10 +253,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1493" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1576675191587" />
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1576614426013">
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1576675325991">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1576614426013" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1576675325991" />
     <state x="578" y="329" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1576081148667">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
