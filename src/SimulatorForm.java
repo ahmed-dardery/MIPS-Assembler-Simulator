@@ -1,6 +1,3 @@
-import com.sun.deploy.security.SelectableSecurityManager;
-import javafx.application.Application;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
@@ -8,10 +5,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
 
 public class SimulatorForm extends JFrame {
     private JPanel panel;

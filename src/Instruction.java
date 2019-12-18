@@ -34,7 +34,7 @@ public abstract class Instruction {
             ret = new RTypeInstruction(RTypeInstruction.RTypeNames.valueOf(cmd), args[1], args[2], args[3]);
         }
         else {
-            System.out.println("bad input");
+//            System.out.println("bad input");
             return null;
         }
         return ret;
@@ -93,11 +93,12 @@ public abstract class Instruction {
     }
 
     public static boolean checkArgs(String[] result,String decodeOrder) {
-        System.out.println(decodeOrder);
+//        System.out.println(decodeOrder);
+        String reg = "-?\\d+";
         switch (decodeOrder) {
             case "RT_RS_IMM":
             case "RD_RT_SHAMT":
-                if (result.length!=4 || !result[1].startsWith("$") || !result[2].startsWith("$") || !result[3].matches("\\d+"))
+                if (result.length!=4 || !result[1].startsWith("$") || !result[2].startsWith("$") || !result[3].matches(reg))
                     return false;
             break;
 
@@ -108,12 +109,12 @@ public abstract class Instruction {
                 break;
 
             case"RT_IMM_RS":
-                if(result.length!=4 || !result[1].startsWith("$") || !result[2].matches("\\d+") || !result[3].startsWith("$"))
+                if(result.length!=4 || !result[1].startsWith("$") || !result[2].matches(reg) || !result[3].startsWith("$"))
                     return false;
                 break;
 
             case"RT_IMM":
-                if(result.length!=3 || !result[1].startsWith("$") || !result[2].matches("\\d+"))
+                if(result.length!=3 || !result[1].startsWith("$") || !result[2].matches(reg))
                     return false;
                 break;
 
@@ -128,8 +129,8 @@ public abstract class Instruction {
                     return false;
                 break;
 
-                default:
-                    return false;
+            default:
+                return false;
         }
         return true;
     }
@@ -167,6 +168,6 @@ public abstract class Instruction {
     int adjustBits(int value, int bits, int shift) {
         return (value & ((1 << bits) - 1)) << shift;
     }
-
+    
 
 }
