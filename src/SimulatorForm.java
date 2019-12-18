@@ -2,10 +2,11 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class SimulatorForm extends JFrame {
@@ -27,10 +28,10 @@ public class SimulatorForm extends JFrame {
     private JPanel runPanel;
     private JTextPane instructionDecPane;
     private JTextField currebtInstructionTxt;
-    private JTextField textField1;
+    private JTextField pcText;
     private JTable textTable;
-    private JTextField lowtxt;
-    private JTextField hightxt;
+    private JTextField loText;
+    private JTextField hiText;
 
     private String assemblyCode;
 
@@ -54,7 +55,7 @@ public class SimulatorForm extends JFrame {
     }
 
     private void buildMemory() {
-        DefaultTableModel model = new DefaultTableModel() {
+        DefaultTableModel model = new DefaultTableModel(){
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 1;
@@ -72,12 +73,13 @@ public class SimulatorForm extends JFrame {
         model.setRowCount(0);
         Memory mem = simulator.getMemory();
         for (int i = 0; i < mem.getMemorySize(); i++) {
-            model.addRow(new Object[]{"0x" + Integer.toString(i << 2, 16), mem.getValue(i)});
+            String number = Integer.toString(i << 2, 16);
+            model.addRow(new Object[]{"0x" + ("00000000" + number).substring(number.length()), mem.getValue(i)});
         }
     }
 
     private void buildRegisters() {
-        DefaultTableModel model = new DefaultTableModel() {
+        DefaultTableModel model = new DefaultTableModel(){
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 1;
@@ -88,8 +90,6 @@ public class SimulatorForm extends JFrame {
         model.addColumn("Register");
         model.addColumn("Content");
         registerTable.setModel(model);
-        lowtxt.setText(simulator.getLoRegister() + "");
-        hightxt.setText(simulator.getHiRegister() + "");
     }
 
     private void resyncRegisters() {
@@ -99,16 +99,30 @@ public class SimulatorForm extends JFrame {
         for (int i = 0; i < mem.getMemorySize(); i++) {
             model.addRow(new Object[]{RegisterNames.getRegisterIdentifier(i), mem.getValue(i)});
         }
-        lowtxt.setText(simulator.getLoRegister() + "");
-        hightxt.setText(simulator.getHiRegister() + "");
     }
-
+    private void setPC(int value){
+        pcText.setText(String.valueOf(value));
+    }
+    private int getPC(){
+        int pc = Integer.parseInt(pcText.getText(), 16);
+        return pc;
+    }
+    private void updateCurrentInstruction(){
+        Instruction currentInstruction = null;
+        try {
+            currentInstruction = simulator.fetchNextInstruction();
+            currebtInstructionTxt.setText(currentInstruction.toAssembly());
+        } catch (Exception e) {
+            currebtInstructionTxt.setText("Terminated");
+        }
+    }
     SimulatorForm(Simulator s) {
         simulator = s;
 
         buildMemory();
         buildRegisters();
         buildText();
+        setPC(s.getPC());
 
         clearMemory();
         clearRegisters();
@@ -126,7 +140,6 @@ public class SimulatorForm extends JFrame {
         memoryTable.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                //super.keyTyped(e);
                 int row = memoryTable.getSelectedRow();
                 int col = memoryTable.getSelectedColumn();
                 int value = simulator.getMemory().getValue(row);
@@ -140,7 +153,6 @@ public class SimulatorForm extends JFrame {
         registerTable.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                //super.keyTyped(e);
                 int row = registerTable.getSelectedRow();
                 int col = registerTable.getSelectedColumn();
                 int value = simulator.getRegisters().getValue(row);
@@ -149,13 +161,29 @@ public class SimulatorForm extends JFrame {
                 } catch (Exception ignored) {
                 }
                 simulator.getRegisters().setValue(row, value);
-
             }
         });
-        textField1.addKeyListener(new KeyAdapter() {
+        pcText.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    simulator.setPC(getPC());
+                    updateCurrentInstruction();
+                } catch (Exception ex) {
+                    addException(ex);
+                }
+            }
+        });
+        loText.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                //TODO Update Program Counter
+                simulator.setLoRegister(Integer.parseInt(loText.getText()));
+            }
+        });
+        hiText.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                simulator.setLoRegister(Integer.parseInt(hiText.getText()));
             }
         });
     }
@@ -168,15 +196,14 @@ public class SimulatorForm extends JFrame {
         }
         resyncMemory();
         resyncRegisters();
-        textField1.setText(String.valueOf(simulator.getPC()));
-
+        setPC(simulator.getPC());
     }
 
     private void runSingleInstruction() {
         try {
             UpdateHandler uh = new UpdateHandler();
             simulator.executeNextInstruction(uh);
-            textField1.setText(String.valueOf(simulator.getPC()));
+            pcText.setText(String.valueOf(simulator.getPC()));
 
             DefaultTableModel model = (DefaultTableModel) memoryTable.getModel();
             for (int v : uh.getScheduledMemory()) {
@@ -186,11 +213,12 @@ public class SimulatorForm extends JFrame {
             for (int v : uh.getScheduledRegisters()) {
                 model.setValueAt(simulator.getRegisters().getValue(v), v, 1);
             }
-            if (uh.getScheduledLoHi()) {
-                lowtxt.setText(simulator.getLoRegister() + "");
-                hightxt.setText(simulator.getHiRegister() + "");
+            if (uh.getScheduledLoHi()){
+                loText.setText(String.valueOf(simulator.getLoRegister()));
+                hiText.setText(String.valueOf(simulator.getHiRegister()));
             }
-
+            setPC(simulator.getPC());
+            updateCurrentInstruction();
         } catch (Exception ex) {
             addException(ex);
         }
@@ -205,9 +233,13 @@ public class SimulatorForm extends JFrame {
             try {
                 simulator.setInstructionList(Parser.parseFile(assemblyCodeFile));
                 resyncText();
-            } catch (IOException e) {
+                updateCurrentInstruction();
+            } catch (Exception e) {
                 addException(e);
             }
+            pcText.setEditable(true);
+            runEntireButton.setEnabled(true);
+            runInstructionButton.setEnabled(true);
         }
     }
 
@@ -230,8 +262,8 @@ public class SimulatorForm extends JFrame {
         for (int i = 0; i < simulator.getRegisters().getMemorySize(); ++i) {
             simulator.getRegisters().setValue(i, 0);
         }
-        simulator.setHiRegister(0);
-        simulator.setLoRegister(0);
         resyncRegisters();
     }
+
+
 }
