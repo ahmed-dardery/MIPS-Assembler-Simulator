@@ -1,5 +1,3 @@
-
-
 import java.util.List;
 
 public class Simulator {
@@ -21,7 +19,7 @@ public class Simulator {
         return instructions;
     }
 
-    public void setInstructionList(List<Instruction> instructions) {
+    public void setInstructionList(List<Instruction> instructions) throws Exception {
         this.instructions = instructions;
         setPC(0);
     }
@@ -63,7 +61,7 @@ public class Simulator {
         }
     }
 
-    private Instruction fetchNextInstruction() throws Exception {
+    public Instruction fetchNextInstruction() throws Exception {
         if (programCounter >> 2 >= instructions.size())
             throw new Exception("terminated.");
         else
@@ -92,7 +90,8 @@ public class Simulator {
         return programCounter;
     }
 
-    private void setPC(int value) {
+    public void setPC(int value) throws Exception {
+        if((value % 4) != 0) throw new Exception("not word aligned.");
         programCounter = value;
     }
 
@@ -309,5 +308,14 @@ public class Simulator {
 
     public void setLoRegister(int lo) {
         this.lo = lo;
+    }
+
+    public Instruction getCurrentInstruction(){
+        Instruction i;
+        if(programCounter % 4 == 0)
+            try {
+                return instructions.get(programCounter >> 2);
+            }catch (Exception e){}
+        return null;
     }
 }
