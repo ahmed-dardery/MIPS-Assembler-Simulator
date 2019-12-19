@@ -72,7 +72,8 @@ public class SimulatorForm extends JFrame {
         model.setRowCount(0);
         Memory mem = simulator.getMemory();
         for (int i = 0; i < mem.getMemorySize(); i++) {
-            model.addRow(new Object[]{"0x" + Integer.toString(i << 2, 16), mem.getValue(i)});
+            String number = Integer.toString(i << 2, 16);
+            model.addRow(new Object[]{"0x" + ("00000000" + number).substring(number.length()), mem.getValue(i)});
         }
     }
 
