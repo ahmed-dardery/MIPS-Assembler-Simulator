@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a3ebaf77-304f-4ad9-829c-aa7df49727be" name="Default Changelist" comment="">
+    <list default="true" id="409de4c8-ac1d-4cac-99b5-bcf13ff2927b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SimulatorForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatorForm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Task_1-Assembly_Codes/Set_2/task1.asm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Task_1-Assembly_Codes/Set_2/test.s" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
