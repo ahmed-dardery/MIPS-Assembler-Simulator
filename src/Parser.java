@@ -16,9 +16,9 @@ public class Parser {
 
         int idx = 0;
         for (String in : lines) {
-            int comment = in.indexOf("//");
+            int comment = in.indexOf("#");
             if (comment != -1)
-                in = in.substring(0, in.indexOf("//")).trim();
+                in = in.substring(0, in.indexOf("#")).trim();
             else
                 in = in.trim();
 
